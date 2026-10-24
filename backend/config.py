@@ -12,8 +12,8 @@ GEMINI_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/opena
 
 GEMINI_API_KEY: str | None = os.getenv("GEMINI_API_KEY")
 GRAPHRAG_API_KEY: str | None = GEMINI_API_KEY
-LLM_MODEL_CHEAP: str = os.getenv("LLM_MODEL_CHEAP", "gemini-2.5-flash-lite")
-LLM_MODEL_STRONG: str = os.getenv("LLM_MODEL_STRONG", "gemini-2.5-flash-lite")
+LLM_MODEL_CHEAP: str = os.getenv("LLM_MODEL_CHEAP", "gemini-3.5-flash-lite")
+LLM_MODEL_STRONG: str = os.getenv("LLM_MODEL_STRONG", "gemini-3.5-flash-lite")
 LLM_BASE_URL: str = os.getenv("LLM_BASE_URL") or GEMINI_OPENAI_BASE_URL
 GRAPH_ROOT: Path = (PROJECT_ROOT / os.getenv("GRAPH_ROOT", "myproj")).resolve()
 OUTPUT_DIR: Path = GRAPH_ROOT / "output"

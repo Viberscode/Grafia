@@ -125,7 +125,9 @@ def run(question: str, mode: str = "auto", support_check: bool = True) -> Respon
         is_abstain, reason = abstain.should_abstain(route, scores, claims, closest_community(question))
 
         with _timer(timings, "path"):
-            highlights, sources = path.build_highlights(route, result.context, get_graph(), engine.load_tables())
+            focus = " ".join([c.text for c in claims] + [e.quote for c in claims for e in c.evidence])
+            highlights, sources = path.build_highlights(
+                route, result.context, get_graph(), engine.load_tables(), focus_text=focus)
         timings["total"] = int((time.perf_counter() - t_start) * 1000)
 
         if is_abstain:

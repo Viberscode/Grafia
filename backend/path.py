@@ -12,6 +12,7 @@ from backend.contracts import Highlights, Source
 logger = logging.getLogger(__name__)
 
 MAX_GLOBAL_NODES = 60
+MAX_LOCAL_FALLBACK = 8
 EXCERPT_CHARS = 300
 
 
@@ -57,6 +58,21 @@ def _edges_from_relationships(context: dict, graph: nx.Graph) -> tuple[set[str],
     return nodes, edges
 
 
+def focus_entities(entities: list[str], focus_text: str | None) -> list[str]:
+    """Entities named in the focus text, else the top-ranked context entities."""
+    if focus_text:
+        text = focus_text.lower()
+        named = [e for e in entities if e.lower() in text]
+        if named:
+            return named
+    return entities[:MAX_LOCAL_FALLBACK]
+
+
+def _edge_within(graph: nx.Graph, edge_id: str, nodes: set[str]) -> bool:
+    """True if the edge with this id connects two nodes in the set."""
+    return any(d.get("id") == edge_id and u in nodes and v in nodes for u, v, d in graph.edges(data=True))
+
+
 def _shortest_path(graph: nx.Graph, entities: list[str]) -> tuple[list[str], set[str]]:
     """Shortest path between the two highest-degree matched entities that are connected."""
     ranked = sorted(entities, key=lambda n: graph.nodes[n].get("degree", 0), reverse=True)
@@ -97,8 +113,9 @@ def build_highlights(
     context: dict,
     graph: nx.Graph,
     tables: dict[str, pd.DataFrame] | None = None,
+    focus_text: str | None = None,
 ) -> tuple[Highlights, list[Source]]:
-    """Return graph highlights (nodes, edges, communities) and document sources for a response."""
+    """Return highlights and sources; focus_text (claims + quotes) narrows local highlights to cited entities."""
     nodes: list[str] = []
     edges: set[str] = set()
     communities: list[str] = []
@@ -110,11 +127,12 @@ def build_highlights(
             members.sort(key=lambda n: graph.nodes[n].get("degree", 0), reverse=True)
             nodes = members[:MAX_GLOBAL_NODES]
         else:
-            ents = matched_entities(context, graph)
-            rel_nodes, edges = _edges_from_relationships(context, graph)
+            ents = focus_entities(matched_entities(context, graph), focus_text)
+            rel_nodes, rel_edges = _edges_from_relationships(context, graph)
             path, path_edges = _shortest_path(graph, ents)
-            edges |= path_edges
-            nodes = list(dict.fromkeys(ents + path + [n for n in rel_nodes if n in ents]))
+            nodes = list(dict.fromkeys(ents + path))
+            keep = set(nodes)
+            edges = path_edges | {e for e in rel_edges if _edge_within(graph, e, keep)}
             communities = sorted({graph.nodes[n].get("community", "") for n in nodes} - {""})
     except Exception as err:
         logger.warning("Could not build highlights: %s", err)

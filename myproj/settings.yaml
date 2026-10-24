@@ -9,7 +9,7 @@ concurrent_requests: 2 # free-tier Gemini: keep parallel LLM calls low
 completion_models:
   default_completion_model:
     model_provider: gemini
-    model: gemini-2.5-flash-lite
+    model: gemini-3.5-flash-lite
     auth_method: api_key
     api_key: ${GEMINI_API_KEY}
     retry:

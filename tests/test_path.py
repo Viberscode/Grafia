@@ -34,6 +34,20 @@ def test_missing_columns_do_not_raise(fake_graph: nx.Graph) -> None:
     assert sources[0].doc == "unknown document"
 
 
+def test_focus_text_limits_local_highlights(fake_graph: nx.Graph, local_context: dict) -> None:
+    """Only entities named in the verified claims are highlighted."""
+    hl, _ = build_highlights("local", local_context, fake_graph, None, focus_text="Alpha partnered with Beta.")
+    assert hl.nodes == ["ALPHA"]
+    assert hl.edges == []
+
+
+def test_focus_text_limits_local_highlights(fake_graph: nx.Graph, local_context: dict) -> None:
+    """Only entities named in the verified claims are highlighted."""
+    hl, _ = build_highlights("local", local_context, fake_graph, None, focus_text="Alpha partnered with Beta.")
+    assert hl.nodes == ["ALPHA"]
+    assert hl.edges == []
+
+
 def test_matched_entities_case_insensitive(fake_graph: nx.Graph) -> None:
     """Lower-case entity names match upper-case graph nodes."""
     assert matched_entities({"entities": [{"entity": "alpha"}]}, fake_graph) == ["ALPHA"]
