@@ -3,12 +3,23 @@ import pytest
 
 from backend import verify
 from backend.abstain import should_abstain
+from backend.answer import normalise_claim
 from backend.contracts import Claim, Evidence
 
 CHUNKS = {
     "c1": "The Kestrel Battery Storage Project entered service in June 2024.",
     "c2": "Helix Turbines supplied 40 floating turbines.",
 }
+
+
+def test_bare_evidence_list_becomes_verifiable_claim() -> None:
+    raw = [{"chunk_id": "c1", "quote": "entered service in June 2024"}, {"chunk_id": "c2", "quote": ""}]
+    claim = normalise_claim(raw)
+    assert claim == {"text": "entered service in June 2024", "evidence": [raw[0]]}
+    assert normalise_claim({"claim": "x", "evidence": []})["text"] == "x"
+    assert normalise_claim([]) is None and normalise_claim("text") is None
+    kept = verify.check_quotes([claim], CHUNKS)
+    assert len(kept) == 1 and kept[0].evidence[0].chunk_id == "c1"
 
 
 def test_fabricated_quote_dropped_real_quote_kept() -> None:

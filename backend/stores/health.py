@@ -44,3 +44,15 @@ def vector_chip() -> dict:
 def status() -> list[dict]:
     """Health chips for every store."""
     return [graph_chip(), vector_chip()]
+
+
+def main() -> int:
+    """Log each store's status; exit code 1 if any store is down or empty."""
+    chips = status()
+    for c in chips:
+        logger.info("%s %s: %s", "OK  " if c["ok"] else "DOWN", c["name"], c["detail"])
+    return 0 if all(c["ok"] for c in chips) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

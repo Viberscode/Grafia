@@ -130,13 +130,6 @@ def chat_json(model: str, system: str, user: str, schema_hint: str = "") -> dict
         return _parse_json(chat_text(model, sys_prompt, repair))
 
 
-def reset_counters() -> None:
-    """Zero the call, cache-hit and token counters."""
-    with _LOCK:
-        for k in COUNTERS:
-            COUNTERS[k] = 0
-
-
 if __name__ == "__main__":
     from backend.config import LLM_MODEL_CHEAP
 

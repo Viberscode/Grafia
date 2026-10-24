@@ -1,0 +1,718 @@
+[
+ {
+  "question": "What are the main themes of Aurora Bay's clean energy transition?",
+  "mode": "auto",
+  "response": {
+   "route": "global",
+   "answer": "Aurora Bay's clean energy transition features renewable energy integration and grid resilience following the 2019 Harbor Blackout. It is driven by municipal governance, the Aurora Bay Clean Energy Plan, and building efficiency initiatives like the Greenhomes Retrofit Program. Additionally, the transition involves managing growing electricity demand from electrification technologies such as heat pumps and electric vehicles while navigating community debates over costs and targets.",
+   "abstained": false,
+   "abstain_reason": null,
+   "claims": [
+    {
+     "text": "Aurora Bay's transition involves renewable energy integration and grid resilience following the 2019 Harbor Blackout.",
+     "evidence": [
+      {
+       "chunk_id": "report_0",
+       "quote": "the strategic push toward renewable energy and grid resilience in Aurora Bay following historical events such as the 2019 Harbor Blackout"
+      }
+     ]
+    },
+    {
+     "text": "The transition is guided by municipal governance and the Aurora Bay Clean Energy Plan.",
+     "evidence": [
+      {
+       "chunk_id": "report_2",
+       "quote": "Aurora Bay is a coastal city undergoing a major energy transition guided by a local energy plan and city council."
+      }
+     ]
+    },
+    {
+     "text": "Growing electricity demand is driven by electrification technologies like heat pumps and electric vehicles.",
+     "evidence": [
+      {
+       "chunk_id": "report_2",
+       "quote": "growing electricity demand driven by electrification technologies such as heat pumps and electric vehicles"
+      }
+     ]
+    },
+    {
+     "text": "Political opposition exists regarding administrative costs and aggressive clean energy targets.",
+     "evidence": [
+      {
+       "chunk_id": "report_2",
+       "quote": "political opposition regarding administrative costs and aggressive targets."
+      }
+     ]
+    }
+   ],
+   "highlights": {
+    "nodes": [
+     "AURORA BAY",
+     "AURORA BAY CLEAN ENERGY PLAN",
+     "HARBOR BLACKOUT",
+     "HEAT PUMPS",
+     "ELECTRIC VEHICLES"
+    ],
+    "edges": [
+     "129",
+     "130"
+    ],
+    "communities": [
+     "2",
+     "6",
+     "0"
+    ]
+   },
+   "sources": [
+    {
+     "doc": "Theme report: Aurora Bay Clean Energy Plan and Community Impact",
+     "chunk_id": "report_2",
+     "text": "# Aurora Bay Clean Energy Plan and Community Impact\n\nThis community report details the clean energy transition and associated economic and social dynamics in Aurora Bay. Key entities include the city of Aurora Bay, the Greenhomes Retrofit Program, the Aurora Bay Taxpayers Alliance, and local distric..."
+    },
+    {
+     "doc": "Theme report: Elena Vasquez and the Aurora Bay Clean Energy Plan",
+     "chunk_id": "report_0",
+     "text": "# Elena Vasquez and the Aurora Bay Clean Energy Plan\n\nThis community centers around Mayor Elena Vasquez, the Aurora Bay Clean Energy Plan, and the Aurora Bay City Council. The relationships within this community highlight municipal governance, environmental policy, and the strategic push toward rene..."
+    },
+    {
+     "doc": "Theme report: Aurora Bay Clean Energy Transition and Infrastructure",
+     "chunk_id": "report_6",
+     "text": "# Aurora Bay Clean Energy Transition and Infrastructure\n\nThis community centers around the coastal city of Aurora Bay and its ongoing comprehensive energy transition. The network includes administrative districts like Kestrel and Eastside, infrastructural initiatives such as the Greenhomes Retrofit ..."
+    }
+   ],
+   "timings_ms": {
+    "route": 2,
+    "retrieve": 2845,
+    "retrieve_reports": 1224,
+    "answer": 1,
+    "verify": 4,
+    "path": 13,
+    "total": 2989
+   },
+   "router": {
+    "route": "global",
+    "confidence": 1.0,
+    "reason": "Corpus-wide thematic overview of the city's clean energy transition."
+   },
+   "search_answer": "",
+   "stats": {
+    "chunks": 3,
+    "quotes_total": 5,
+    "quotes_valid": 4,
+    "claims_raw": 5,
+    "claims_verified": 4
+   },
+   "trace": [
+    {
+     "kind": "community",
+     "ids": [
+      "2"
+     ],
+     "note": "Aurora Bay Clean Energy Plan and Community Impact (similarity 0.69)"
+    },
+    {
+     "kind": "community",
+     "ids": [
+      "6"
+     ],
+     "note": "Aurora Bay Clean Energy Transition and Infrastructure (similarity 0.68)"
+    },
+    {
+     "kind": "community",
+     "ids": [
+      "0"
+     ],
+     "note": "Elena Vasquez and the Aurora Bay Clean Energy Plan (similarity 0.60)"
+    }
+   ],
+   "retrieval": {
+    "communities": [
+     {
+      "id": "2",
+      "title": "Aurora Bay Clean Energy Plan and Community Impact",
+      "score": 0.687
+     },
+     {
+      "id": "6",
+      "title": "Aurora Bay Clean Energy Transition and Infrastructure",
+      "score": 0.6756
+     },
+     {
+      "id": "0",
+      "title": "Elena Vasquez and the Aurora Bay Clean Energy Plan",
+      "score": 0.5969
+     }
+    ],
+    "selection": "similarity",
+    "members": 14,
+    "contexts": [
+     {
+      "chunk_id": "report_2",
+      "label": "theme",
+      "doc": "Theme report: Aurora Bay Clean Energy Plan and Community Impact",
+      "why": "similarity"
+     },
+     {
+      "chunk_id": "report_6",
+      "label": "theme",
+      "doc": "Theme report: Aurora Bay Clean Energy Transition and Infrastructure",
+      "why": "similarity"
+     },
+     {
+      "chunk_id": "report_0",
+      "label": "theme",
+      "doc": "Theme report: Elena Vasquez and the Aurora Bay Clean Energy Plan",
+      "why": "similarity"
+     }
+    ],
+    "cited_documents": []
+   }
+  }
+ },
+ {
+  "question": "How is Dr. Priya Raman connected to the company that built the Kestrel control software?",
+  "mode": "auto",
+  "response": {
+   "route": "local",
+   "answer": "Dr. Priya Raman directed Coastal State University's Grid Resilience Lab, where two doctoral students founded Gridwise Analytics, the company that built the Kestrel control software.",
+   "abstained": false,
+   "abstain_reason": null,
+   "claims": [
+    {
+     "text": "Dr. Priya Raman directed Coastal State University's Grid Resilience Lab.",
+     "evidence": [
+      {
+       "chunk_id": "91972532b511f2af440b33b7b68dcc9e3ae7dd051e47bf702a8356ae213205073fabc2ef7c1fdad16fb07f47455fb0a1dc5f7fd415c097a6a2de6778611e14f1",
+       "quote": "Coastal State University's Grid Resilience Lab, directed by Dr. Priya Raman, became the main research partner for Aurora Bay's energy transition."
+      }
+     ]
+    },
+    {
+     "text": "Two doctoral students from Raman's lab founded Gridwise Analytics to commercialize wind forecasting models.",
+     "evidence": [
+      {
+       "chunk_id": "91972532b511f2af440b33b7b68dcc9e3ae7dd051e47bf702a8356ae213205073fabc2ef7c1fdad16fb07f47455fb0a1dc5f7fd415c097a6a2de6778611e14f1",
+       "quote": "In 2021 two of Raman's doctoral students, Tomas Berg and Aisha Karim, founded Gridwise Analytics to commercialise the lab's wind forecasting models."
+      }
+     ]
+    },
+    {
+     "text": "Gridwise Analytics built the control software for the Kestrel Battery Storage Project.",
+     "evidence": [
+      {
+       "chunk_id": "91972532b511f2af440b33b7b68dcc9e3ae7dd051e47bf702a8356ae213205073fabc2ef7c1fdad16fb07f47455fb0a1dc5f7fd415c097a6a2de6778611e14f1",
+       "quote": "Gridwise Analytics later won the contract to build the control software for the Kestrel Battery Storage Project."
+      }
+     ]
+    }
+   ],
+   "highlights": {
+    "nodes": [
+     "DR. PRIYA RAMAN",
+     "KESTREL BATTERY STORAGE PROJECT",
+     "KESTREL",
+     "AURORA BAY",
+     "GRID RESILIENCE LAB",
+     "COASTAL STATE UNIVERSITY"
+    ],
+    "edges": [
+     "15",
+     "38",
+     "47",
+     "48",
+     "58",
+     "78",
+     "79",
+     "80"
+    ],
+    "communities": [
+     "2",
+     "3"
+    ]
+   },
+   "sources": [
+    {
+     "doc": "07_coastal_state_research.txt",
+     "chunk_id": "91972532b511f2af440b33b7b68dcc9e3ae7dd051e47bf702a8356ae213205073fabc2ef7c1fdad16fb07f47455fb0a1dc5f7fd415c097a6a2de6778611e14f1",
+     "text": "Coastal State University Grid Research\n\nCoastal State University's Grid Resilience Lab, directed by Dr. Priya Raman, became the main research partner for Aurora Bay's energy transition. The lab first gained public attention for the Raman Report, its independent review of the 2019 Harbor Blackout.\n\nI..."
+    },
+    {
+     "doc": "04_kestrel_battery_storage.txt",
+     "chunk_id": "99e05ee867c3c123d72c79cfc75911e9dc9cf940f290a8da7f8600086d968c7005c550c1eacd6d6ef63ad1c6a1af5a63b1a6b6896748d065705e89b8bf5e93ca",
+     "text": "Kestrel Battery Storage Project\n\nThe Kestrel Battery Storage Project is a 300 megawatt, 1,200 megawatt-hour lithium iron phosphate battery facility built on the site of a former rail yard in the Kestrel district of Aurora Bay. It is owned and operated by Aurora Bay Power and Light, the city's munici..."
+    },
+    {
+     "doc": "02_harbor_blackout.txt",
+     "chunk_id": "00078fdbf9c51125c64cd2678c3f13b590d1c04dec84248601c5cb84b7b97847b6085920a24e087ff35a453c17690e392c4a148843081d6dab269827e79b85a7",
+     "text": "The 2019 Harbor Blackout\n\nOn 14 August 2019 a heat wave pushed electricity demand in Aurora Bay to a record peak. The aging Saltmarsh Gas Plant, owned by Aurora Bay Power and Light, tripped offline when its cooling system failed. Within an hour, cascading failures at two substations left 60,000 hous..."
+    },
+    {
+     "doc": "05_greenhomes_retrofit.txt",
+     "chunk_id": "c7c746d6ac46afe30e9ee4c0a6a511284640600f70889dc2b012a6729b11767b7ef1f4f70d3545b397feeb386d985a5a9356476131b01a1ff79c6713e26a5107",
+     "text": "GreenHomes Retrofit Program\n\nThe GreenHomes Retrofit Program is the building efficiency pillar of the Aurora Bay Clean Energy Plan. It offers grants and low-interest loans to homeowners and landlords for insulation, heat pumps, and rooftop solar panels.\n\nThe program is administered by the Office of ..."
+    },
+    {
+     "doc": "10_annual_scorecard_2025.txt",
+     "chunk_id": "37a0e0b89b12178145d710c765d4ca9ad3c755854ef6cf710f96732e6664c97d2bd4bdb56587be19ba30bd3f475fde2bf0eedfea57a4eda260bad3e1b0fb5688",
+     "text": "Aurora Bay Clean Energy Scorecard 2025\n\nThe Office of Sustainability published its fourth annual scorecard in January 2026. Director Marcus Oyelaran reported that renewable sources supplied 52 percent of Aurora Bay's electricity in 2025, up from 18 percent in 2020.\n\nKey milestones in 2025 included f..."
+    },
+    {
+     "doc": "01_aurora_bay_energy_plan.txt",
+     "chunk_id": "c76960916f3336d170967553532b8b4281551ec6eb2f19a5a5b46893bf638814b88425975800f3f4abc77311eb2efd78ef3f27f5678b7e95fd3fffeeec7446e6",
+     "text": "The Aurora Bay Clean Energy Plan\n\nIn March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez champio..."
+    },
+    {
+     "doc": "09_saltmarsh_retirement.txt",
+     "chunk_id": "27db4cd88054186809a27ce88c1a94c7ccc4401fc5fa255cad085739b5cb40b1e4e3ab404afb423b2d6e13d139e4a52d96dbd76de8b00f86caa087ae6d04e80a",
+     "text": "Retiring the Saltmarsh Gas Plant\n\nThe Saltmarsh Gas Plant, a 450 megawatt natural gas facility built in 1978, was for decades the backbone of Aurora Bay's electricity supply. Its failure during the 2019 Harbor Blackout exposed the risks of relying on a single ageing plant.\n\nUnder the Aurora Bay Clea..."
+    },
+    {
+     "doc": "03_northwind_offshore_wind.txt",
+     "chunk_id": "4a1bc02a8772ab84ba2950b13ea71a7eb88437773c0687678dbe64c037ef203b227702f30ce3252dabd4822946b164cfe01fea60051d8f877aae74113c90976e",
+     "text": "Northwind Offshore Wind Farm\n\nThe Northwind Offshore Wind Farm is a 600 megawatt project located 25 kilometres off the coast of Aurora Bay. It is developed by Tidewater Energy, a renewable developer headquartered in Port Linden, under a 20-year power purchase agreement with Aurora Bay Power and Ligh..."
+    }
+   ],
+   "timings_ms": {
+    "route": 14059,
+    "retrieve": 1018,
+    "retrieve_seed": 76,
+    "retrieve_expand": 226,
+    "retrieve_rank": 147,
+    "retrieve_chunks": 568,
+    "answer": 8926,
+    "verify": 10478,
+    "path": 0,
+    "total": 34485
+   },
+   "router": {
+    "route": "local",
+    "confidence": 0.95,
+    "reason": "Multi-hop entity link connecting a specific person to a specific company and product."
+   },
+   "search_answer": "",
+   "stats": {
+    "chunks": 8,
+    "quotes_total": 3,
+    "quotes_valid": 3,
+    "claims_raw": 3,
+    "claims_verified": 3
+   },
+   "trace": [
+    {
+     "kind": "seed",
+     "ids": [
+      "DR. PRIYA RAMAN",
+      "KESTREL"
+     ],
+     "note": "DR. PRIYA RAMAN (exact); KESTREL (exact)"
+    },
+    {
+     "kind": "hop",
+     "ids": [
+      "DR. PRIYA RAMAN",
+      "KESTREL BATTERY STORAGE PROJECT",
+      "KESTREL"
+     ],
+     "note": "DR. PRIYA RAMAN -> KESTREL BATTERY STORAGE PROJECT -> KESTREL (2 hops)"
+    },
+    {
+     "kind": "chunk",
+     "ids": [
+      "99e05ee867c3c123d72c79cfc75911e9dc9cf940f290a8da7f8600086d968c7005c550c1eacd6d6ef63ad1c6a1af5a63b1a6b6896748d065705e89b8bf5e93ca",
+      "91972532b511f2af440b33b7b68dcc9e3ae7dd051e47bf702a8356ae213205073fabc2ef7c1fdad16fb07f47455fb0a1dc5f7fd415c097a6a2de6778611e14f1",
+      "00078fdbf9c51125c64cd2678c3f13b590d1c04dec84248601c5cb84b7b97847b6085920a24e087ff35a453c17690e392c4a148843081d6dab269827e79b85a7",
+      "c7c746d6ac46afe30e9ee4c0a6a511284640600f70889dc2b012a6729b11767b7ef1f4f70d3545b397feeb386d985a5a9356476131b01a1ff79c6713e26a5107",
+      "37a0e0b89b12178145d710c765d4ca9ad3c755854ef6cf710f96732e6664c97d2bd4bdb56587be19ba30bd3f475fde2bf0eedfea57a4eda260bad3e1b0fb5688",
+      "c76960916f3336d170967553532b8b4281551ec6eb2f19a5a5b46893bf638814b88425975800f3f4abc77311eb2efd78ef3f27f5678b7e95fd3fffeeec7446e6",
+      "27db4cd88054186809a27ce88c1a94c7ccc4401fc5fa255cad085739b5cb40b1e4e3ab404afb423b2d6e13d139e4a52d96dbd76de8b00f86caa087ae6d04e80a",
+      "4a1bc02a8772ab84ba2950b13ea71a7eb88437773c0687678dbe64c037ef203b227702f30ce3252dabd4822946b164cfe01fea60051d8f877aae74113c90976e"
+     ],
+     "note": "mentions, relationship evidence"
+    },
+    {
+     "kind": "document",
+     "ids": [
+      "01_aurora_bay_energy_plan.txt",
+      "02_harbor_blackout.txt",
+      "03_northwind_offshore_wind.txt",
+      "04_kestrel_battery_storage.txt",
+      "05_greenhomes_retrofit.txt",
+      "07_coastal_state_research.txt",
+      "09_saltmarsh_retirement.txt",
+      "10_annual_scorecard_2025.txt"
+     ],
+     "note": "8 source documents"
+    }
+   ],
+   "retrieval": {
+    "seeds": [
+     {
+      "title": "DR. PRIYA RAMAN",
+      "how": "exact",
+      "weight": 1.0
+     },
+     {
+      "title": "KESTREL",
+      "how": "exact",
+      "weight": 1.0
+     }
+    ],
+    "expanded": 38,
+    "path": [
+     "DR. PRIYA RAMAN",
+     "KESTREL BATTERY STORAGE PROJECT",
+     "KESTREL"
+    ],
+    "pagerank": {
+     "DR. PRIYA RAMAN": 0.1297,
+     "KESTREL": 0.0848,
+     "AURORA BAY": 0.0809,
+     "GREENHOMES RETROFIT PROGRAM": 0.0669,
+     "AURORA BAY CLEAN ENERGY PLAN": 0.063,
+     "RAMAN REPORT": 0.0446,
+     "KESTREL BATTERY STORAGE PROJECT": 0.0443,
+     "SALTMARSH GAS PLANT": 0.044,
+     "GRID RESILIENCE LAB": 0.0411,
+     "COASTAL STATE UNIVERSITY": 0.0397,
+     "ELENA VASQUEZ": 0.0326,
+     "NORTHWIND OFFSHORE WIND FARM": 0.0297
+    },
+    "contexts": [
+     {
+      "chunk_id": "99e05ee867c3c123d72c79cfc75911e9dc9cf940f290a8da7f8600086d968c7005c550c1eacd6d6ef63ad1c6a1af5a63b1a6b6896748d065705e89b8bf5e93ca",
+      "label": "fact",
+      "doc": "04_kestrel_battery_storage.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "91972532b511f2af440b33b7b68dcc9e3ae7dd051e47bf702a8356ae213205073fabc2ef7c1fdad16fb07f47455fb0a1dc5f7fd415c097a6a2de6778611e14f1",
+      "label": "fact",
+      "doc": "07_coastal_state_research.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "00078fdbf9c51125c64cd2678c3f13b590d1c04dec84248601c5cb84b7b97847b6085920a24e087ff35a453c17690e392c4a148843081d6dab269827e79b85a7",
+      "label": "fact",
+      "doc": "02_harbor_blackout.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "c7c746d6ac46afe30e9ee4c0a6a511284640600f70889dc2b012a6729b11767b7ef1f4f70d3545b397feeb386d985a5a9356476131b01a1ff79c6713e26a5107",
+      "label": "fact",
+      "doc": "05_greenhomes_retrofit.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "37a0e0b89b12178145d710c765d4ca9ad3c755854ef6cf710f96732e6664c97d2bd4bdb56587be19ba30bd3f475fde2bf0eedfea57a4eda260bad3e1b0fb5688",
+      "label": "fact",
+      "doc": "10_annual_scorecard_2025.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "c76960916f3336d170967553532b8b4281551ec6eb2f19a5a5b46893bf638814b88425975800f3f4abc77311eb2efd78ef3f27f5678b7e95fd3fffeeec7446e6",
+      "label": "fact",
+      "doc": "01_aurora_bay_energy_plan.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "27db4cd88054186809a27ce88c1a94c7ccc4401fc5fa255cad085739b5cb40b1e4e3ab404afb423b2d6e13d139e4a52d96dbd76de8b00f86caa087ae6d04e80a",
+      "label": "fact",
+      "doc": "09_saltmarsh_retirement.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "4a1bc02a8772ab84ba2950b13ea71a7eb88437773c0687678dbe64c037ef203b227702f30ce3252dabd4822946b164cfe01fea60051d8f877aae74113c90976e",
+      "label": "fact",
+      "doc": "03_northwind_offshore_wind.txt",
+      "why": "mentions AURORA BAY"
+     }
+    ],
+    "cited_documents": [
+     "07_coastal_state_research.txt"
+    ]
+   }
+  }
+ },
+ {
+  "question": "What are the main themes around financing, and who issued the green bond?",
+  "mode": "auto",
+  "response": {
+   "route": "hybrid",
+   "answer": "The main themes concerning financing include municipal financing through the Aurora Bay Green Bond, private investment, and certified environmental standards working together to fund local sustainability and infrastructure projects. The municipal government of Aurora Bay issued the 400 million dollar Aurora Bay Green Bond in 2022.",
+   "abstained": false,
+   "abstain_reason": null,
+   "claims": [
+    {
+     "text": "The financing themes involve municipal financing, private investment, and certified environmental standards funding local sustainability and infrastructure projects.",
+     "evidence": [
+      {
+       "chunk_id": "report_15",
+       "quote": "The network highlights municipal financing, private investment, and certified environmental standards working together to fund local sustainability and infrastructure projects."
+      }
+     ]
+    },
+    {
+     "text": "The municipal government of Aurora Bay issued the Aurora Bay Green Bond in 2022.",
+     "evidence": [
+      {
+       "chunk_id": "report_15",
+       "quote": "The municipal government of Aurora Bay issued a 400 million dollar municipal bond in 2022 known as the Aurora Bay Green Bond"
+      }
+     ]
+    }
+   ],
+   "highlights": {
+    "nodes": [
+     "AURORA BAY GREEN BOND",
+     "AURORA BAY"
+    ],
+    "edges": [],
+    "communities": [
+     "15"
+    ]
+   },
+   "sources": [
+    {
+     "doc": "Theme report: Aurora Bay Green Bond and Meridian Capital Financial Network",
+     "chunk_id": "report_15",
+     "text": "# Aurora Bay Green Bond and Meridian Capital Financial Network\n\nThis community centers around the financial operations, green bond issuances, and investments supporting clean energy initiatives in Aurora Bay. Key entities include the City of Aurora Bay, Meridian Capital, the Aurora Bay Green Bond, t..."
+    },
+    {
+     "doc": "06_green_bond_financing.txt",
+     "chunk_id": "f67c4a3b0a7622611fb5c2b31443002a8cd792fa75ddbf13abd6c55f353c472b1ab9735a24214d51ac56f6a03c34e8e7439a2f9089673d3af0761995ecf435d5",
+     "text": "Financing the Transition: The Aurora Bay Green Bond\n\nIn May 2022 the City of Aurora Bay issued the Aurora Bay Green Bond, a 400 million dollar municipal bond dedicated to clean energy infrastructure. The bond was underwritten by Meridian Capital and certified under the International Green Bond Stand..."
+    },
+    {
+     "doc": "01_aurora_bay_energy_plan.txt",
+     "chunk_id": "c76960916f3336d170967553532b8b4281551ec6eb2f19a5a5b46893bf638814b88425975800f3f4abc77311eb2efd78ef3f27f5678b7e95fd3fffeeec7446e6",
+     "text": "The Aurora Bay Clean Energy Plan\n\nIn March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez champio..."
+    },
+    {
+     "doc": "03_northwind_offshore_wind.txt",
+     "chunk_id": "4a1bc02a8772ab84ba2950b13ea71a7eb88437773c0687678dbe64c037ef203b227702f30ce3252dabd4822946b164cfe01fea60051d8f877aae74113c90976e",
+     "text": "Northwind Offshore Wind Farm\n\nThe Northwind Offshore Wind Farm is a 600 megawatt project located 25 kilometres off the coast of Aurora Bay. It is developed by Tidewater Energy, a renewable developer headquartered in Port Linden, under a 20-year power purchase agreement with Aurora Bay Power and Ligh..."
+    },
+    {
+     "doc": "04_kestrel_battery_storage.txt",
+     "chunk_id": "99e05ee867c3c123d72c79cfc75911e9dc9cf940f290a8da7f8600086d968c7005c550c1eacd6d6ef63ad1c6a1af5a63b1a6b6896748d065705e89b8bf5e93ca",
+     "text": "Kestrel Battery Storage Project\n\nThe Kestrel Battery Storage Project is a 300 megawatt, 1,200 megawatt-hour lithium iron phosphate battery facility built on the site of a former rail yard in the Kestrel district of Aurora Bay. It is owned and operated by Aurora Bay Power and Light, the city's munici..."
+    },
+    {
+     "doc": "09_saltmarsh_retirement.txt",
+     "chunk_id": "27db4cd88054186809a27ce88c1a94c7ccc4401fc5fa255cad085739b5cb40b1e4e3ab404afb423b2d6e13d139e4a52d96dbd76de8b00f86caa087ae6d04e80a",
+     "text": "Retiring the Saltmarsh Gas Plant\n\nThe Saltmarsh Gas Plant, a 450 megawatt natural gas facility built in 1978, was for decades the backbone of Aurora Bay's electricity supply. Its failure during the 2019 Harbor Blackout exposed the risks of relying on a single ageing plant.\n\nUnder the Aurora Bay Clea..."
+    },
+    {
+     "doc": "05_greenhomes_retrofit.txt",
+     "chunk_id": "c7c746d6ac46afe30e9ee4c0a6a511284640600f70889dc2b012a6729b11767b7ef1f4f70d3545b397feeb386d985a5a9356476131b01a1ff79c6713e26a5107",
+     "text": "GreenHomes Retrofit Program\n\nThe GreenHomes Retrofit Program is the building efficiency pillar of the Aurora Bay Clean Energy Plan. It offers grants and low-interest loans to homeowners and landlords for insulation, heat pumps, and rooftop solar panels.\n\nThe program is administered by the Office of ..."
+    },
+    {
+     "doc": "10_annual_scorecard_2025.txt",
+     "chunk_id": "37a0e0b89b12178145d710c765d4ca9ad3c755854ef6cf710f96732e6664c97d2bd4bdb56587be19ba30bd3f475fde2bf0eedfea57a4eda260bad3e1b0fb5688",
+     "text": "Aurora Bay Clean Energy Scorecard 2025\n\nThe Office of Sustainability published its fourth annual scorecard in January 2026. Director Marcus Oyelaran reported that renewable sources supplied 52 percent of Aurora Bay's electricity in 2025, up from 18 percent in 2020.\n\nKey milestones in 2025 included f..."
+    },
+    {
+     "doc": "08_fisheries_dispute.txt",
+     "chunk_id": "bf391ffcddb3adbcc734933f39fe2a546d9e57b43a2a09e1a0aa1ad9cba5e7fbcc964976a2c7759756f933237892e4f37fb2b6e2ec2fe5ed848fccc1f4c74efe",
+     "text": "The Northwind Fisheries Dispute\n\nWhen Tidewater Energy published the site plan for the Northwind Offshore Wind Farm in 2022, the Coastal Fishermen's Association objected. The association's president, Liam Murphy, said that the planned turbine array overlapped with scallop and cod grounds that had su..."
+    }
+   ],
+   "timings_ms": {
+    "route": 3,
+    "retrieve": 1739,
+    "retrieve_global_reports": 468,
+    "retrieve_local_seed": 451,
+    "retrieve_local_expand": 208,
+    "retrieve_local_rank": 106,
+    "retrieve_local_chunks": 503,
+    "answer": 9685,
+    "verify": 6136,
+    "path": 1,
+    "total": 17570
+   },
+   "router": {
+    "route": "hybrid",
+    "confidence": 0.9,
+    "reason": "Combines a thematic overview of financing with a specific entity and fact (the issuer of the green bond)."
+   },
+   "search_answer": "",
+   "stats": {
+    "chunks": 9,
+    "quotes_total": 2,
+    "quotes_valid": 2,
+    "claims_raw": 2,
+    "claims_verified": 2
+   },
+   "trace": [
+    {
+     "kind": "community",
+     "ids": [
+      "15"
+     ],
+     "note": "Aurora Bay Green Bond and Meridian Capital Financial Network (similarity 0.45)"
+    },
+    {
+     "kind": "seed",
+     "ids": [
+      "INTERNATIONAL GREEN BOND STANDARD",
+      "AURORA BAY GREEN BOND"
+     ],
+     "note": "INTERNATIONAL GREEN BOND STANDARD (vector 0.54); AURORA BAY GREEN BOND (vector 0.51)"
+    },
+    {
+     "kind": "hop",
+     "ids": [
+      "INTERNATIONAL GREEN BOND STANDARD",
+      "AURORA BAY GREEN BOND"
+     ],
+     "note": "INTERNATIONAL GREEN BOND STANDARD -> AURORA BAY GREEN BOND (1 hops)"
+    },
+    {
+     "kind": "chunk",
+     "ids": [
+      "f67c4a3b0a7622611fb5c2b31443002a8cd792fa75ddbf13abd6c55f353c472b1ab9735a24214d51ac56f6a03c34e8e7439a2f9089673d3af0761995ecf435d5",
+      "c76960916f3336d170967553532b8b4281551ec6eb2f19a5a5b46893bf638814b88425975800f3f4abc77311eb2efd78ef3f27f5678b7e95fd3fffeeec7446e6",
+      "4a1bc02a8772ab84ba2950b13ea71a7eb88437773c0687678dbe64c037ef203b227702f30ce3252dabd4822946b164cfe01fea60051d8f877aae74113c90976e",
+      "99e05ee867c3c123d72c79cfc75911e9dc9cf940f290a8da7f8600086d968c7005c550c1eacd6d6ef63ad1c6a1af5a63b1a6b6896748d065705e89b8bf5e93ca",
+      "27db4cd88054186809a27ce88c1a94c7ccc4401fc5fa255cad085739b5cb40b1e4e3ab404afb423b2d6e13d139e4a52d96dbd76de8b00f86caa087ae6d04e80a",
+      "c7c746d6ac46afe30e9ee4c0a6a511284640600f70889dc2b012a6729b11767b7ef1f4f70d3545b397feeb386d985a5a9356476131b01a1ff79c6713e26a5107",
+      "37a0e0b89b12178145d710c765d4ca9ad3c755854ef6cf710f96732e6664c97d2bd4bdb56587be19ba30bd3f475fde2bf0eedfea57a4eda260bad3e1b0fb5688",
+      "bf391ffcddb3adbcc734933f39fe2a546d9e57b43a2a09e1a0aa1ad9cba5e7fbcc964976a2c7759756f933237892e4f37fb2b6e2ec2fe5ed848fccc1f4c74efe"
+     ],
+     "note": "relationship evidence"
+    },
+    {
+     "kind": "document",
+     "ids": [
+      "01_aurora_bay_energy_plan.txt",
+      "03_northwind_offshore_wind.txt",
+      "04_kestrel_battery_storage.txt",
+      "05_greenhomes_retrofit.txt",
+      "06_green_bond_financing.txt",
+      "08_fisheries_dispute.txt",
+      "09_saltmarsh_retirement.txt",
+      "10_annual_scorecard_2025.txt"
+     ],
+     "note": "8 source documents"
+    }
+   ],
+   "retrieval": {
+    "global": {
+     "communities": [
+      {
+       "id": "15",
+       "title": "Aurora Bay Green Bond and Meridian Capital Financial Network",
+       "score": 0.4464
+      }
+     ],
+     "selection": "similarity",
+     "members": 5,
+     "timings_ms": {
+      "reports": 468
+     }
+    },
+    "local": {
+     "seeds": [
+      {
+       "title": "INTERNATIONAL GREEN BOND STANDARD",
+       "how": "vector",
+       "weight": 0.535
+      },
+      {
+       "title": "AURORA BAY GREEN BOND",
+       "how": "vector",
+       "weight": 0.512
+      }
+     ],
+     "expanded": 38,
+     "path": [
+      "INTERNATIONAL GREEN BOND STANDARD",
+      "AURORA BAY GREEN BOND"
+     ],
+     "pagerank": {
+      "INTERNATIONAL GREEN BOND STANDARD": 0.0938,
+      "AURORA BAY GREEN BOND": 0.2098,
+      "AURORA BAY CLEAN ENERGY PLAN": 0.0698,
+      "NORTHWIND OFFSHORE WIND FARM": 0.0565,
+      "GREENHOMES RETROFIT PROGRAM": 0.0463,
+      "AURORA BAY": 0.0351,
+      "AURORA BAY TAXPAYERS ALLIANCE": 0.0335,
+      "KESTREL BATTERY STORAGE PROJECT": 0.0328,
+      "TIDEWATER ENERGY": 0.0302,
+      "DAVID CHEN": 0.03,
+      "SALTMARSH GAS PLANT": 0.0299,
+      "NATIONAL CLEAN GRID FUND": 0.0267
+     },
+     "timings_ms": {
+      "seed": 451,
+      "expand": 208,
+      "rank": 106,
+      "chunks": 503
+     }
+    },
+    "split": {
+     "theme": 1,
+     "fact": 8
+    },
+    "contexts": [
+     {
+      "chunk_id": "report_15",
+      "label": "theme",
+      "doc": "Theme report: Aurora Bay Green Bond and Meridian Capital Financial Network",
+      "why": "similarity"
+     },
+     {
+      "chunk_id": "f67c4a3b0a7622611fb5c2b31443002a8cd792fa75ddbf13abd6c55f353c472b1ab9735a24214d51ac56f6a03c34e8e7439a2f9089673d3af0761995ecf435d5",
+      "label": "fact",
+      "doc": "06_green_bond_financing.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "c76960916f3336d170967553532b8b4281551ec6eb2f19a5a5b46893bf638814b88425975800f3f4abc77311eb2efd78ef3f27f5678b7e95fd3fffeeec7446e6",
+      "label": "fact",
+      "doc": "01_aurora_bay_energy_plan.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "4a1bc02a8772ab84ba2950b13ea71a7eb88437773c0687678dbe64c037ef203b227702f30ce3252dabd4822946b164cfe01fea60051d8f877aae74113c90976e",
+      "label": "fact",
+      "doc": "03_northwind_offshore_wind.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "99e05ee867c3c123d72c79cfc75911e9dc9cf940f290a8da7f8600086d968c7005c550c1eacd6d6ef63ad1c6a1af5a63b1a6b6896748d065705e89b8bf5e93ca",
+      "label": "fact",
+      "doc": "04_kestrel_battery_storage.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "27db4cd88054186809a27ce88c1a94c7ccc4401fc5fa255cad085739b5cb40b1e4e3ab404afb423b2d6e13d139e4a52d96dbd76de8b00f86caa087ae6d04e80a",
+      "label": "fact",
+      "doc": "09_saltmarsh_retirement.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "c7c746d6ac46afe30e9ee4c0a6a511284640600f70889dc2b012a6729b11767b7ef1f4f70d3545b397feeb386d985a5a9356476131b01a1ff79c6713e26a5107",
+      "label": "fact",
+      "doc": "05_greenhomes_retrofit.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "37a0e0b89b12178145d710c765d4ca9ad3c755854ef6cf710f96732e6664c97d2bd4bdb56587be19ba30bd3f475fde2bf0eedfea57a4eda260bad3e1b0fb5688",
+      "label": "fact",
+      "doc": "10_annual_scorecard_2025.txt",
+      "why": "relationship"
+     },
+     {
+      "chunk_id": "bf391ffcddb3adbcc734933f39fe2a546d9e57b43a2a09e1a0aa1ad9cba5e7fbcc964976a2c7759756f933237892e4f37fb2b6e2ec2fe5ed848fccc1f4c74efe",
+      "label": "fact",
+      "doc": "08_fisheries_dispute.txt",
+      "why": "relationship"
+     }
+    ],
+    "cited_documents": []
+   }
+  }
+ }
+]

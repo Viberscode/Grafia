@@ -7,7 +7,7 @@ import streamlit as st
 
 st.set_page_config(page_title="ThemeGraph", page_icon=":material/hub:", layout="wide")
 
-from ui import chat, compare, ingest_panel, sources, state, styles, themes  # noqa: E402
+from ui import chat, compare, demo_seed, ingest_panel, sources, state, styles, themes  # noqa: E402
 from ui.data import DataSource, load, payload  # noqa: E402
 
 logger = logging.getLogger("themegraph.app")
@@ -83,6 +83,7 @@ def right_column(data: DataSource) -> None:
 def main() -> None:
     styles.inject()
     state.init()
+    demo_seed.apply()
     data = load()
     handle_graph_event(st.session_state.get(state.GRAPH_KEY))
     if data.is_mock:

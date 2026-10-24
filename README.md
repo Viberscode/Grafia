@@ -1,101 +1,129 @@
 # ThemeGraph
 
-ThemeGraph is a split-screen knowledge-graph Q&A app built on Microsoft GraphRAG. Drop in a small
-document corpus, and GraphRAG extracts entities, relationships and themed communities. A router sends each
-question to **global search** (themes across the corpus), **local search** (facts and multi-hop links), or
-**abstains** when the corpus can't answer. Every answer is split into claims that carry verbatim quotes,
-each checked against the source text, and the clickable graph on the right highlights the evidence
-path. A benchmark compares the routed pipeline with GraphRAG basic, local-only and global-only search.
+ThemeGraph is a split-screen knowledge-graph Q&A app built on Microsoft GraphRAG. Upload a small corpus
+(text or PDF) and GraphRAG extracts entities, relationships and themed communities; the loader puts them
+into a **graph database** (Neo4j, or embedded Kùzu) and a **vector database** (ChromaDB). A router sends each
+question to **global** retrieval (themes), **local** retrieval (facts and multi-hop links), **hybrid** (both,
+fused) or **abstains**. Every answer is split into claims with verbatim quotes that are checked against the
+source text, and the clickable graph on the right replays the exact retrieval path: seeds, hops, communities,
+chunks and documents. A resumable benchmark compares routed ThemeGraph with GraphRAG's own basic, local and
+global search.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    U[User question] --> R{router.py<br/>LLM + keyword prior}
-    R -- thematic --> G[engine.py<br/>GraphRAG global search]
-    R -- factual / multi-hop --> L[engine.py<br/>GraphRAG local search]
-    R -- off-topic --> X[abstain.py]
-    G --> A[answer.py<br/>claims + quotes]
-    L --> A
-    A --> V[verify.py<br/>quote substring + support check]
-    V --> X
-    V --> P[path.py<br/>highlights + sources]
-    P --> RESP[Response contract]
-    X --> RESP
-    RESP --> UI[app.py + ui/<br/>chat 40% / interactive graph 60%]
-    IDX[(myproj/output<br/>parquet + LanceDB)] --> G & L
-    IDX --> GR[graph.py<br/>NetworkX] --> P & UI
+    D[Documents<br/>txt / pdf upload] --> I[GraphRAG indexing<br/>engine.py, index_job.py]
+    I --> PQ[(parquet<br/>myproj/output)]
+    PQ --> LD[stores/loader.py]
+    LD --> GDB[(Graph DB<br/>Neo4j or Kùzu)]
+    LD --> VDB[(ChromaDB<br/>chunks, reports, entities)]
+    Q[Question] --> R{router.py<br/>global / local / hybrid / abstain}
+    R -- themes --> GL[retrieval/global_.py<br/>top community reports]
+    R -- facts, multi-hop --> LO[retrieval/local.py<br/>seeds, 2-hop, PageRank, chunks]
+    R -- both --> HY[retrieval/hybrid.py<br/>reciprocal rank fusion]
+    GDB --> LO & GL
+    VDB --> LO & GL
+    GL & LO & HY --> A[answer.py<br/>claims + quotes]
+    A --> V[verify.py<br/>verbatim quote + support check]
+    V --> AB[abstain.py]
+    V & AB --> RESP[Response + trace]
+    RESP --> UI[app.py + ui/<br/>chat, evidence graph, trace replay]
 ```
 
-All LLM calls go through `backend/llm.py`, which caches responses in SQLite (`cache.db`) and retries with backoff.
+All LLM calls go through `backend/llm.py`, which caches every response in SQLite (`cache.db`) and retries with
+backoff. GraphRAG's own indexing and baseline searches use its LiteLLM client with the same Gemini key.
 
-## Setup (clean clone to running app)
+## Setup (fresh clone to running app)
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\activate            # macOS/Linux: source .venv/bin/activate
+.venv\Scripts\activate                 # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-copy .env.example .env            # then set GRAPHRAG_API_KEY (an OpenAI key with credits)
+copy .env.example .env                 # then set GEMINI_API_KEY and NEO4J_PASSWORD
 
-.\tasks.ps1 index                 # or: make index   (GraphRAG indexing + schema notes)
-.\tasks.ps1 test                  # offline unit tests
-.\tasks.ps1 smoke                 # 3 end-to-end questions (needs API key)
-.\tasks.ps1 app                   # streamlit run app.py
-.\tasks.ps1 mock                  # same app with built-in demo data (MOCK=1), no index or API key needed
-.\tasks.ps1 eval                  # benchmark -> eval/results/summary.csv
+.\tasks.ps1 up                         # start Neo4j in Docker (skip if using Kùzu, see below)
+.\tasks.ps1 index                      # GraphRAG indexing of myproj/input + schema notes; loads the stores
+.\tasks.ps1 load                       # (re)load Neo4j/Kùzu + ChromaDB from the parquet output
+.\tasks.ps1 app                        # streamlit run app.py
 ```
 
-### The UI
+No API key or index yet? `.\tasks.ps1 mock` runs the same UI on built-in sample data (`MOCK=1`).
+Already indexed but out of quota? `.\tasks.ps1 demo` preloads three recorded answers (`--demo-seed`).
 
-- **Chat (left)**: corpus chips and index status, example questions, route badge (hover for reason and
-  confidence), streamed answer, claim cards with verified quotes and **Show in graph**, sources, abstain card with
-  **Show closest theme**, copy, thumbs feedback, follow-up chips, and a search-mode popover (Auto, Global, Local, Basic).
-- **Right tabs**: Graph | Themes | Sources | Compare | Results. The graph is a bidirectional Streamlit component
-  (`ui/graph_component`, plain HTML/JS with a vendored `vis-network`, no build step). Click a node for its drawer
-  (*Ask about this*, *Expand neighbours*); `/` searches, `F` fits, `Esc` clears; depth slider, community legend,
-  evidence replay, fullscreen and PNG export.
-- **Demo mode**: `MOCK=1` (or no index in `myproj/output`) loads a 40-node sample graph with canned global, local,
-  abstained and 12-node multi-hop answers. Try "What are the main themes?", "What is the Harbor Wind Farm?",
-  "How is the Clean Energy Plan connected to the Electric Bus Fleet?" and "What is the capital of France?".
-- Component test bench: `streamlit run scripts/graph_component_demo.py` (12-node sample; events shown via `st.write`).
+### All `tasks.ps1` targets
 
-The sample corpus in `myproj/input/` is 10 short documents about a fictional city's clean energy
-transition, written with deliberate cross-document links (people, organisations and projects that recur
-across documents). To use your own corpus, replace those files or use the upload panel in the app, then delete
-`myproj/output` and re-index.
+| Target | What it does |
+|---|---|
+| `up` | `docker compose up -d --wait neo4j` (Neo4j 5 with auth from `.env`, named volume, healthcheck) |
+| `index` | GraphRAG indexing into a staging folder, swapped in only on success; then loads the stores |
+| `load` | `python -m backend.stores.loader --reset`: parquet into the graph store and ChromaDB, prints counts |
+| `app` / `mock` / `demo` | the app; with sample data; with three preloaded answers |
+| `test` | offline unit tests (`OFFLINE=1`, fakes for Neo4j, Chroma and the LLM) |
+| `smoke` | 3 end-to-end questions: thematic, multi-hop, unanswerable |
+| `check` | offline tests, store health and the smoke test, printing PASS or FAIL for each |
+| `eval` | resumable benchmark (`eval.run --resume --sleep 4`) then `eval.report` |
+| `inspect` / `graph` | regenerate `docs/schema_notes.md`; write static graph HTML to `myproj/output` |
 
-## Environment variables
+`make` has the same targets for macOS/Linux.
+
+## Configuration (`.env`)
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `GRAPHRAG_API_KEY` | LLM key used by GraphRAG and `llm.py` | required |
-| `LLM_MODEL_CHEAP` | routing, verification | `gpt-4o-mini` |
-| `LLM_MODEL_STRONG` | answer generation, eval judge | `gpt-4o` |
-| `LLM_BASE_URL` | optional OpenAI-compatible endpoint for `llm.py` | blank |
+| `GEMINI_API_KEY` | Gemini key from [AI Studio](https://aistudio.google.com/apikey); used by GraphRAG and `llm.py` | required |
+| `LLM_MODEL_CHEAP` | routing and the support check | `gemini-3.5-flash-lite` |
+| `LLM_MODEL_STRONG` | answers, question drafting, eval judge | `gemini-3.5-flash-lite` |
+| `LLM_BASE_URL` | OpenAI-compatible endpoint for `llm.py` | Gemini's OpenAI endpoint |
+| `GRAPH_BACKEND` | `neo4j` or `kuzu` | `neo4j` |
+| `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` | Neo4j connection; the password also seeds the container | `bolt://localhost:7687`, `neo4j`, required |
+| `KUZU_PATH` | embedded Kùzu database file | `myproj/kuzu` |
+| `CHROMA_PATH` | ChromaDB persistent folder | `myproj/chroma` |
 | `GRAPH_ROOT` | GraphRAG project folder | `myproj` |
-| `ABSTAIN_MIN_SCORE` | minimum retrieval signal (matched entities / reports) | `1` |
+| `ABSTAIN_MIN_SCORE` | minimum retrieval signal (matched entities or reports) | `1` |
 | `ROUTER_MIN_CONF` | below this router confidence, fall back to local | `0.5` |
-| `COMMUNITY_LEVEL` | community hierarchy level for global/local search | `2` |
+| `COMMUNITY_LEVEL` | community level for the GraphRAG baselines | `2` |
+
+The Gemini free tier is rate limited: the LLM cache makes repeat questions free, the benchmark runs one
+question at a time with `--sleep`, and nothing calls the LLM inside a per-item loop.
+
+### Graph and vector stores
+
+- **Neo4j (default):** `.\tasks.ps1 up`, then `.\tasks.ps1 load`. Browse at http://localhost:7474. Schema:
+  `(:Document)-[:HAS_CHUNK]->(:Chunk)-[:MENTIONS]->(:Entity)-[:REL]->(:Entity)-[:IN_COMMUNITY]->(:Community)`,
+  with uniqueness constraints on ids and an index on `Entity.title`. Ids are deterministic, so loads are idempotent.
+- **Kùzu (no Docker):** set `GRAPH_BACKEND=kuzu` and run `.\tasks.ps1 load`. Same schema and tests, embedded in
+  one file. **Kùzu is archived upstream (October 2025) and pinned to `kuzu==0.11.3`**; it is a fallback only.
+- **ChromaDB:** always embedded (`CHROMA_PATH`), with collections `chunks`, `reports` and `entities`, embedded
+  locally by Chroma's default ONNX model (all-MiniLM-L6-v2), so indexing the vectors costs no Gemini calls.
+- If the graph database is unreachable, the app falls back to an in-memory graph and the header chip turns red.
+
+## Using the app
+
+- **Left:** a Documents panel (upload, delete, *Build knowledge graph* with live stages and Cancel), store status
+  chips, example questions, and chat. Each answer shows a route badge (hybrid answers show a *Theme N + Facts M*
+  split), an N-step trace badge, claim cards with verified quotes and a theme/fact origin chip, sources,
+  follow-ups, and a search-mode picker (Auto, Global, Local, Hybrid and the three GraphRAG baselines).
+- **Right tabs:**
+  - **Graph:** an interactive evidence graph with numbered trace badges. *Replay* steps through the trace with
+    captions, a community halo appears for themes, and *Docs* shows square document nodes with dashed *cites*
+    edges. Clicking an entity or document opens a drawer with excerpts and *Ask about this*.
+  - **Themes:** community reports. **Sources:** cited chunks with highlighted quotes.
+  - **Compare:** ThemeGraph vs GraphRAG basic on the same question.
+  - **Results:** benchmark charts and extraction precision.
+- The sample corpus in `myproj/input/` is 10 short documents about a fictional city's clean energy transition,
+  written with deliberate cross-document links.
 
 ## How the requirements are met
 
-| Requirement | Implementation |
-|---|---|
-| Ingestion | `engine.ingest_files` (txt + PDF via pypdf) into `myproj/input`; upload panel in the app; `engine.run_index` calls `graphrag.api.build_index` |
-| Entities and themes | GraphRAG entity/relationship extraction and Leiden communities with LLM community reports; community titles in the sidebar |
-| Knowledge graph | `graph.py` builds a NetworkX graph (node = entity, edge = relationship with `text_unit_ids`) and renders it with pyvis |
-| Vector store | GraphRAG's LanceDB store (`myproj/output/lancedb`) holds text-unit and entity embeddings used by local and basic search |
-| Query router | `router.py`: cheap-model classifier with 8 few-shot examples, keyword prior, confidence fallback |
-| Grounded answers | `answer.py` forces claims with verbatim quotes, `verify.py` drops any quote not found in its cited chunk and runs a batched support check, and `abstain.py` declines when nothing survives |
-| Split-screen UI | `app.py` + `ui/`: chat with route badges, claim cards and sources on the left; interactive evidence graph (`ui/graph_component`, payload from `graph.to_payload`) plus Themes, Sources, Compare and Results tabs on the right |
-
-**Which store each route reads:** global reads `community_reports` + `communities` parquet; local reads
-LanceDB entity embeddings, then `entities`, `relationships`, `text_units` and `community_reports` parquet; basic reads
-LanceDB text-unit embeddings. Highlights and sources come from the NetworkX graph and parquet tables.
+See [docs/requirements_traceability.md](docs/requirements_traceability.md) for each requirement's
+files, test and demo step.
 
 ## Results
 
-Run `.\tasks.ps1 eval`, then `python -m eval.write_readme_table` to replace the block below.
+`.\tasks.ps1 eval` writes `eval/results/summary.csv` and `summary.md`; `python -m eval.write_readme_table`
+replaces the block below. Systems: `graphrag_basic`, `graphrag_local`, `graphrag_global` (GraphRAG's own
+searches, with the same answer and verification step) and `themegraph_routed`.
 
 <!-- RESULTS:START -->
 #### All questions
@@ -117,33 +145,59 @@ Run `.\tasks.ps1 eval`, then `python -m eval.write_readme_table` to replace the 
 | themegraph_routed | 4 | 0.25 | 0.94 | 0.95 | 2.75 | 1.00 | - | - | 23461 | 3.00 |
 <!-- RESULTS:END -->
 
-Metric notes: evidence recall is measured against gold chunks (`gold_chunk_ids`, or every chunk of the
-`gold_docs` when a question has none). Correctness is an LLM judge against the reference answer,
-with the systems shown in a seeded random order.
+Metric notes:
+- Evidence recall is measured against gold chunks: `gold_chunk_ids`, or every chunk of the `gold_docs` when a
+  question has none. Report evidence counts the chunks behind that community.
+- Router accuracy counts hybrid as correct for questions marked `mixed`.
+- Correctness is a secondary LLM judge against the reference answer, with the systems in a seeded random order.
+- `llm_calls` counts calls through `backend/llm.py` only. GraphRAG's internal search calls for the baselines are
+  not counted, so the baselines' true cost is higher than shown.
+- The table above covers only the first 4 (thematic) questions, from the acceptance run. Run the full 24 with
+  `.\tasks.ps1 eval` (resumable across sessions if the daily quota runs out).
+
+Extraction quality: `python -m eval.extraction_audit` samples 30 relationships and 30 entities into
+`eval/results/extraction_audit*.csv`. Fill in the y/n columns, then `--score` writes the precision used by the
+Results tab and this README.
 
 ## Limitations
 
-- No conflict or contradiction edges: conflicting statements across documents are not detected.
-- No incremental ingestion: adding documents means re-indexing the whole corpus.
+- **Extraction accuracy is unmeasured until the audit is filled in.** The audit sheets list likely duplicate
+  entities that GraphRAG did not merge (for example `DR. PRIYA RAMAN` / `PRIYA RAMAN` and three
+  `HARBOR BLACKOUT` variants), which split evidence across nodes.
+- **Gemini free tier:** rate limits and transient 503s slow indexing and the benchmark; failed pairs are retried
+  with `--resume`. The support check is an LLM call, so a rate-limited run can occasionally reject claims whose
+  quotes verified, and the answer then abstains.
+- **No incremental indexing:** adding documents re-indexes the whole corpus (built in a staging folder, so a failed
+  build leaves the previous index live).
+- **Small benchmark:** 24 hand-checked questions on a 10-document corpus. On the 4 thematic questions run so far,
+  routed ThemeGraph had the highest evidence recall but the lowest judged correctness, so the sample is too small to
+  draw conclusions.
 - Global answers cite community reports (LLM summaries), not raw text, so their quotes are one step removed from the source.
-- Local-search source ids are row positions assigned by GraphRAG; sources are mapped to documents by matching chunk text.
-- Neo4j and ChromaDB (stretch goal P11) are not implemented; their packages are listed in `requirements-stretch.txt`.
+- No contradiction detection across documents.
+- Docker was not available on the development machine, so live runs used Kùzu; the Neo4j store is covered by
+  fake-driver tests and the same schema, but was not exercised against a live server here.
 
 ## Project layout
 
 ```
-backend/   config, contracts, llm, engine, graph, path, router, answer, verify, abstain, pipeline
-app.py     Streamlit split screen (thin: wires ui/ modules together)
-ui/        state, data (real or mock), chat, themes, sources, compare, styles, mock, graph_component/ (HTML/JS)
-eval/      questions.jsonl, run.py, metrics.py, report.py, results/
-tests/     offline tests with a fake graph (no API key needed)
-scripts/   inspect_output.py, smoke_test.py
-docs/      schema_notes.md (generated), graphrag_settings.md, demo_script.md
-myproj/    GraphRAG root: settings.yaml, input/, prompts/, output/
+backend/            config, contracts, llm (cached), engine (GraphRAG), index_job, router, answer, verify, abstain,
+                    pipeline, graph (payload), path (baseline highlights)
+backend/stores/     graph_store (protocol, Neo4j, in-memory), kuzu_store, vector_store (Chroma), loader, health
+backend/retrieval/  local (seeds, 2-hop, PageRank, chunks), global_ (reports), hybrid (RRF)
+app.py              Streamlit split screen (thin: wires ui/ modules together)
+ui/                 state, data, chat, ingest_panel, themes, sources, compare (Compare + Results), demo_seed,
+                    styles, mock, graph_component/ (HTML/JS, vendored vis-network)
+eval/               questions.jsonl, make_questions_draft, run, metrics, report, extraction_audit,
+                    write_readme_table, results/
+tests/              offline tests with fakes (no API key, Docker or network)
+scripts/            smoke_test.py, inspect_output.py, graph_component_demo.py
+docs/               requirements_traceability.md, demo_script.md, demo_seed.json, schema_notes.md, graphrag_settings.md
+myproj/             GraphRAG root: settings.yaml, input/, prompts/, output/ (+ kuzu, chroma when loaded)
 ```
 
 ## Credits
 
-[Microsoft GraphRAG](https://github.com/microsoft/graphrag), [NetworkX](https://networkx.org),
-[pyvis](https://github.com/WestHealth/pyvis), [Streamlit](https://streamlit.io), [LanceDB](https://lancedb.com),
+[Microsoft GraphRAG](https://github.com/microsoft/graphrag), [Neo4j](https://neo4j.com),
+[Kùzu](https://github.com/kuzudb/kuzu), [ChromaDB](https://www.trychroma.com), [NetworkX](https://networkx.org),
+[Streamlit](https://streamlit.io), [vis-network](https://visjs.github.io/vis-network/),
 [OpenAI Python SDK](https://github.com/openai/openai-python), pandas, pyarrow, pypdf, pydantic.

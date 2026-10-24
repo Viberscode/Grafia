@@ -29,11 +29,23 @@ def format_chunks(context_chunks: list[dict]) -> str:
     )
 
 
+def normalise_claim(raw: object) -> dict | None:
+    """Coerce a model claim to {text, evidence}; a bare evidence list becomes a claim made of its quotes."""
+    if isinstance(raw, list):
+        evidence = [e for e in raw if isinstance(e, dict) and e.get("quote")]
+        text = " ".join(str(e["quote"]).strip() for e in evidence)
+        return {"text": text, "evidence": evidence} if evidence else None
+    if isinstance(raw, dict):
+        text = raw.get("text") or raw.get("claim")
+        return {**raw, "text": str(text)} if text else None
+    return None
+
+
 def generate_claims(question: str, context_chunks: list[dict]) -> dict:
     """Return {answer, claims} grounded in context_chunks using the strong model."""
     if not context_chunks:
         return {"answer": "not found", "claims": []}
     user = f"Context chunks:\n\n{format_chunks(context_chunks)}\n\nQuestion: {question}"
     res = chat_json(LLM_MODEL_STRONG, SYSTEM_PROMPT, user, SCHEMA_HINT)
-    claims = [c for c in res.get("claims", []) if isinstance(c, dict) and c.get("text")]
+    claims = [c for c in map(normalise_claim, res.get("claims") or []) if c]
     return {"answer": str(res.get("answer", "not found")), "claims": claims}
