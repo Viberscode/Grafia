@@ -19,6 +19,7 @@ CACHE_DB: Path = PROJECT_ROOT / "cache.db"
 ABSTAIN_MIN_SCORE: int = int(os.getenv("ABSTAIN_MIN_SCORE", "1"))
 ROUTER_MIN_CONF: float = float(os.getenv("ROUTER_MIN_CONF", "0.5"))
 COMMUNITY_LEVEL: int = int(os.getenv("COMMUNITY_LEVEL", "2"))
+OFFLINE: bool = os.getenv("OFFLINE") == "1"
 
 if GRAPHRAG_API_KEY:
     os.environ["GRAPHRAG_API_KEY"] = GRAPHRAG_API_KEY

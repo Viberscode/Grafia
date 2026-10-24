@@ -1,0 +1,4 @@
+-r requirements.txt
+neo4j
+chromadb
+sentence-transformers

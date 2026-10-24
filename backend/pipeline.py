@@ -8,6 +8,8 @@ import time
 from contextlib import contextmanager
 from typing import Iterator
 
+import networkx as nx
+
 from backend import abstain, answer, engine, path, router, verify
 from backend.contracts import Response
 
@@ -17,7 +19,7 @@ MODES = ("auto", "global", "local", "basic")
 STOPWORDS = {"the", "a", "an", "of", "and", "or", "to", "in", "on", "for", "is", "are", "was", "what",
              "who", "how", "why", "when", "which", "did", "does", "do", "with", "about", "by", "this"}
 
-_GRAPH = None
+_GRAPH: nx.Graph | None = None
 
 
 @contextmanager
@@ -30,7 +32,7 @@ def _timer(timings: dict[str, int], name: str) -> Iterator[None]:
         timings[name] = int((time.perf_counter() - t0) * 1000)
 
 
-def get_graph():
+def get_graph() -> nx.Graph:
     """Load the knowledge graph once per process."""
     global _GRAPH
     if _GRAPH is None:

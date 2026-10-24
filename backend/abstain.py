@@ -11,10 +11,7 @@ def should_abstain(
     claims: list[Claim],
     closest_community: str | None = None,
 ) -> tuple[bool, str | None]:
-    """Return (abstain, user-friendly reason).
-
-    scores: {"context": number of chunks, "signal": matched entities (local) or reports used (global)}.
-    """
+    """Return (abstain, reason) from scores {"context": chunks, "signal": entities or reports}."""
     hint = f" The closest topic in the corpus is \u201c{closest_community}\u201d." if closest_community else ""
     if route == "abstain":
         return True, f"This question looks outside the scope of the indexed documents.{hint}"

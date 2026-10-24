@@ -99,7 +99,7 @@ with the systems shown in a seeded random order.
 - No incremental ingestion: adding documents means re-indexing the whole corpus.
 - Global answers cite community reports (LLM summaries), not raw text, so their quotes are one step removed from the source.
 - Local-search source ids are row positions assigned by GraphRAG; sources are mapped to documents by matching chunk text.
-- Neo4j and ChromaDB (stretch goal P11) are not implemented.
+- Neo4j and ChromaDB (stretch goal P11) are not implemented; their packages are listed in `requirements-stretch.txt`.
 
 ## Project layout
 

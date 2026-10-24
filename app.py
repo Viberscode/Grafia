@@ -4,6 +4,7 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
+import networkx as nx
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -18,7 +19,7 @@ INDEX_READY = (OUTPUT_DIR / "entities.parquet").exists()
 
 
 @st.cache_resource(show_spinner="Loading knowledge graph...")
-def get_graph():
+def get_graph() -> nx.Graph:
     """Load the NetworkX graph once per server process."""
     from backend.graph import load_graph
 

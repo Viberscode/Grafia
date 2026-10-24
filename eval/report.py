@@ -16,7 +16,7 @@ COLUMNS = ["system", "type", "n", "correct", "evidence_recall", "quote_validity"
            "abstain_precision", "abstain_recall", "latency_ms", "llm_calls"]
 
 
-def fmt(v) -> str:
+def fmt(v: object) -> str:
     """Format a metric cell."""
     if v is None or (isinstance(v, float) and pd.isna(v)):
         return "-"

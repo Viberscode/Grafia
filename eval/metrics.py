@@ -6,6 +6,7 @@ import logging
 import random
 from collections import defaultdict
 from functools import lru_cache
+from pathlib import Path
 
 from backend.config import LLM_MODEL_STRONG
 from backend.engine import load_tables
@@ -132,6 +133,6 @@ def compute(rows: list[dict], questions: dict[str, dict], use_judge: bool = True
     return {"rows": table, "judged": use_judge}
 
 
-def load_raw(path) -> list[dict]:
+def load_raw(path: Path) -> list[dict]:
     """Read raw.jsonl."""
-    return [json.loads(x) for x in open(path, encoding="utf-8") if x.strip()]
+    return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]

@@ -1,4 +1,6 @@
 """Tests for backend.verify and backend.abstain (offline: support check is stubbed)."""
+import pytest
+
 from backend import verify
 from backend.abstain import should_abstain
 from backend.contracts import Claim, Evidence
@@ -9,7 +11,8 @@ CHUNKS = {
 }
 
 
-def test_fabricated_quote_dropped_real_quote_kept():
+def test_fabricated_quote_dropped_real_quote_kept() -> None:
+    """A fabricated or mis-cited quote is dropped; a real one survives whitespace differences."""
     claims = [
         {"text": "Kestrel started in June 2024.",
          "evidence": [{"chunk_id": "c1", "quote": "entered  service in June 2024"}]},
@@ -22,7 +25,8 @@ def test_fabricated_quote_dropped_real_quote_kept():
     assert [c.text for c in kept] == ["Kestrel started in June 2024."]
 
 
-def test_mixed_evidence_keeps_only_valid_quotes():
+def test_mixed_evidence_keeps_only_valid_quotes() -> None:
+    """Only the valid quote of a claim is kept."""
     claims = [{"text": "Turbines.", "evidence": [
         {"chunk_id": "c2", "quote": "Helix Turbines supplied 40 floating turbines."},
         {"chunk_id": "c2", "quote": "Helix built 90 turbines"},
@@ -31,7 +35,8 @@ def test_mixed_evidence_keeps_only_valid_quotes():
     assert len(kept[0].evidence) == 1
 
 
-def test_support_check_drops_unsupported(monkeypatch):
+def test_support_check_drops_unsupported(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Claims the support model marks unsupported are removed."""
     monkeypatch.setattr(verify, "chat_json", lambda *a, **k: {"results": [
         {"index": 0, "supported": True}, {"index": 1, "supported": False}]})
     claims = [Claim(text="a", evidence=[Evidence(chunk_id="c1", quote="x")]),
@@ -39,7 +44,8 @@ def test_support_check_drops_unsupported(monkeypatch):
     assert [c.text for c in verify.check_support(claims)] == ["a"]
 
 
-def test_abstain_rules():
+def test_abstain_rules() -> None:
+    """Each abstain rule fires on its own condition and names the closest community."""
     claim = Claim(text="a", evidence=[Evidence(chunk_id="c1", quote="x")])
     assert should_abstain("abstain", {}, [])[0]
     assert should_abstain("local", {"context": 0, "signal": 3}, [claim])[0]
