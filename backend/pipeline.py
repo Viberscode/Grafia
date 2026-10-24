@@ -43,10 +43,14 @@ def get_graph() -> nx.Graph:
 
 
 def reset_graph() -> None:
-    """Forget the cached graph and tables so the next call reloads a rebuilt index."""
+    """Forget the cached graph, tables and store clients so the next call reloads a rebuilt index."""
     global _GRAPH
+    from backend.stores import graph_store, vector_store
+
     _GRAPH = None
     engine.load_tables.cache_clear()
+    graph_store.reset_store()
+    vector_store.reset_vectors()
 
 
 def closest_community(question: str) -> str | None:

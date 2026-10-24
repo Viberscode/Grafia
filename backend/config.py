@@ -23,6 +23,12 @@ ABSTAIN_MIN_SCORE: int = int(os.getenv("ABSTAIN_MIN_SCORE", "1"))
 ROUTER_MIN_CONF: float = float(os.getenv("ROUTER_MIN_CONF", "0.5"))
 COMMUNITY_LEVEL: int = int(os.getenv("COMMUNITY_LEVEL", "2"))
 OFFLINE: bool = os.getenv("OFFLINE") == "1"
+GRAPH_BACKEND: str = os.getenv("GRAPH_BACKEND", "neo4j").strip().lower()
+NEO4J_URI: str = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_USER: str = os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD: str | None = os.getenv("NEO4J_PASSWORD")
+KUZU_PATH: Path = (PROJECT_ROOT / os.getenv("KUZU_PATH", "myproj/kuzu")).resolve()
+CHROMA_PATH: Path = (PROJECT_ROOT / os.getenv("CHROMA_PATH", "myproj/chroma")).resolve()
 
 if GEMINI_API_KEY:
     os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY

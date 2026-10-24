@@ -1,8 +1,10 @@
-# Windows equivalent of the Makefile: .\tasks.ps1 index|inspect|graph|app|mock|eval|smoke|test
-param([Parameter(Mandatory)][ValidateSet("index", "inspect", "graph", "app", "mock", "eval", "smoke", "test")][string]$Task)
+# Windows equivalent of the Makefile: .\tasks.ps1 up|load|index|inspect|graph|app|mock|eval|smoke|test
+param([Parameter(Mandatory)][ValidateSet("up", "load", "index", "inspect", "graph", "app", "mock", "eval", "smoke", "test")][string]$Task)
 $py = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
 Set-Location $PSScriptRoot
 switch ($Task) {
+    "up"      { docker compose up -d --wait neo4j }
+    "load"    { & $py -m backend.stores.loader --reset }
     "index"   { & $py -m backend.engine --index; if ($LASTEXITCODE -eq 0) { & $py scripts/inspect_output.py } }
     "inspect" { & $py scripts/inspect_output.py }
     "graph"   { & $py -m backend.graph }

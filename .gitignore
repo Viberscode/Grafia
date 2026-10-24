@@ -13,3 +13,5 @@ myproj/output_staging/
 myproj/output_previous/
 myproj/index_run.log
 eval/results/raw.jsonl
+myproj/kuzu/
+myproj/chroma/

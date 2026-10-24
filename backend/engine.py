@@ -137,13 +137,14 @@ def run_index() -> bool:
 
 
 def post_index_hook() -> None:
-    """Load the fresh index into the graph and vector stores, once backend.stores.loader exists."""
+    """Load the fresh index into the graph and vector stores; a store failure never fails the index."""
     try:
         from backend.stores import loader
-    except ImportError:
-        logger.info("No store loader installed; skipping post-index load")
-        return
-    loader.load(reset=True)
+
+        loader.load(reset=True)
+    except Exception as err:
+        logger.warning("Store load failed (%s: %s); the index is fine, run .\\tasks.ps1 load once the "
+                       "graph database is up", type(err).__name__, err)
 
 
 def index_main() -> int:
