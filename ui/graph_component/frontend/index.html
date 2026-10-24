@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ThemeGraph explorer</title>
+  <link rel="stylesheet" href="graph.css">
+  <script src="lib/vis-network.min.js"></script>
+</head>
+<body>
+<div id="app" class="tg">
+  <div class="toolbar" role="toolbar" aria-label="Graph tools">
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search nodes  ( / )" aria-label="Search nodes"
+             autocomplete="off" aria-autocomplete="list" aria-controls="suggest">
+      <ul id="suggest" role="listbox" aria-label="Matching nodes" hidden></ul>
+    </div>
+    <div class="seg" role="group" aria-label="Graph scope">
+      <button id="viewAnswer" type="button" aria-pressed="true" title="Show only the answer subgraph">Answer</button>
+      <button id="viewFull" type="button" aria-pressed="false" title="Show the full graph">Full</button>
+    </div>
+    <label class="depth" title="Local graph: show only the selected node's neighbourhood">
+      <span>Local</span>
+      <input id="depth" type="range" min="0" max="3" step="1" value="0" aria-label="Local graph depth, 0 is off">
+      <output id="depthVal" for="depth">off</output>
+    </label>
+    <span class="spacer"></span>
+    <button id="replay" type="button" aria-label="Replay evidence path" title="Replay evidence path">&#9654; Replay</button>
+    <button id="fit" type="button" aria-label="Fit graph to view (F)" title="Fit (F)">&#10530; Fit</button>
+    <button id="reset" type="button" aria-label="Reset view" title="Reset view">&#8634; Reset</button>
+    <button id="labels" type="button" aria-label="Cycle label mode" title="Labels: on zoom / always / hidden">Aa zoom</button>
+    <button id="physics" type="button" aria-pressed="false" aria-label="Toggle physics" title="Physics on/off">&#9883; Physics</button>
+    <button id="fullscreen" type="button" aria-label="Toggle fullscreen" title="Fullscreen">&#x26F6;</button>
+    <button id="export" type="button" aria-label="Export graph as PNG" title="Export PNG">&#8681; PNG</button>
+  </div>
+  <div class="stage">
+    <div id="net" role="img" aria-label="Knowledge graph"></div>
+    <aside id="legend" aria-label="Communities">
+      <div class="legend-head">
+        <span>Communities</span>
+        <button id="legendToggle" type="button" aria-expanded="true" aria-label="Collapse legend">&#8211;</button>
+      </div>
+      <div id="legendItems"></div>
+      <div class="legend-key">
+        <span><i class="dot hl"></i> evidence</span>
+        <span><i class="dot dim"></i> context</span>
+      </div>
+    </aside>
+    <aside id="drawer" role="dialog" aria-label="Details" hidden>
+      <button id="drawerClose" type="button" class="icon" aria-label="Close details (Esc)">&times;</button>
+      <div id="drawerBody"></div>
+    </aside>
+    <div id="empty" class="empty" hidden>No nodes to show. Try Full view or enable more communities.</div>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+<script src="graph.js"></script>
+</body>
+</html>

@@ -22,7 +22,7 @@ flowchart LR
     V --> P[path.py<br/>highlights + sources]
     P --> RESP[Response contract]
     X --> RESP
-    RESP --> UI[app.py<br/>chat 40% / pyvis graph 60%]
+    RESP --> UI[app.py + ui/<br/>chat 40% / interactive graph 60%]
     IDX[(myproj/output<br/>parquet + LanceDB)] --> G & L
     IDX --> GR[graph.py<br/>NetworkX] --> P & UI
 ```
@@ -41,8 +41,23 @@ copy .env.example .env            # then set GRAPHRAG_API_KEY (an OpenAI key wit
 .\tasks.ps1 test                  # offline unit tests
 .\tasks.ps1 smoke                 # 3 end-to-end questions (needs API key)
 .\tasks.ps1 app                   # streamlit run app.py
+.\tasks.ps1 mock                  # same app with built-in demo data (MOCK=1), no index or API key needed
 .\tasks.ps1 eval                  # benchmark -> eval/results/summary.csv
 ```
+
+### The UI
+
+- **Chat (left)**: corpus chips and index status, example questions, route badge (hover for reason and
+  confidence), streamed answer, claim cards with verified quotes and **Show in graph**, sources, abstain card with
+  **Show closest theme**, copy, thumbs feedback, follow-up chips, and a search-mode popover (Auto, Global, Local, Basic).
+- **Right tabs**: Graph | Themes | Sources | Compare | Results. The graph is a bidirectional Streamlit component
+  (`ui/graph_component`, plain HTML/JS with a vendored `vis-network`, no build step). Click a node for its drawer
+  (*Ask about this*, *Expand neighbours*); `/` searches, `F` fits, `Esc` clears; depth slider, community legend,
+  evidence replay, fullscreen and PNG export.
+- **Demo mode**: `MOCK=1` (or no index in `myproj/output`) loads a 40-node sample graph with canned global, local,
+  abstained and 12-node multi-hop answers. Try "What are the main themes?", "What is the Harbor Wind Farm?",
+  "How is the Clean Energy Plan connected to the Electric Bus Fleet?" and "What is the capital of France?".
+- Component test bench: `streamlit run scripts/graph_component_demo.py` (12-node sample; events shown via `st.write`).
 
 The sample corpus in `myproj/input/` is 10 short documents about a fictional city's clean energy
 transition, written with deliberate cross-document links (people, organisations and projects that recur
@@ -72,7 +87,7 @@ across documents). To use your own corpus, replace those files or use the upload
 | Vector store | GraphRAG's LanceDB store (`myproj/output/lancedb`) holds text-unit and entity embeddings used by local and basic search |
 | Query router | `router.py`: cheap-model classifier with 8 few-shot examples, keyword prior, confidence fallback |
 | Grounded answers | `answer.py` forces claims with verbatim quotes, `verify.py` drops any quote not found in its cited chunk and runs a batched support check, and `abstain.py` declines when nothing survives |
-| Split-screen UI | `app.py`: chat with route badges, evidence and sources on the left; highlighted graph, legend and node inspector on the right |
+| Split-screen UI | `app.py` + `ui/`: chat with route badges, claim cards and sources on the left; interactive evidence graph (`ui/graph_component`, payload from `graph.to_payload`) plus Themes, Sources, Compare and Results tabs on the right |
 
 **Which store each route reads:** global reads `community_reports` + `communities` parquet; local reads
 LanceDB entity embeddings, then `entities`, `relationships`, `text_units` and `community_reports` parquet; basic reads
@@ -105,7 +120,8 @@ with the systems shown in a seeded random order.
 
 ```
 backend/   config, contracts, llm, engine, graph, path, router, answer, verify, abstain, pipeline
-app.py     Streamlit split screen
+app.py     Streamlit split screen (thin: wires ui/ modules together)
+ui/        state, data (real or mock), chat, themes, sources, compare, styles, mock, graph_component/ (HTML/JS)
 eval/      questions.jsonl, run.py, metrics.py, report.py, results/
 tests/     offline tests with a fake graph (no API key needed)
 scripts/   inspect_output.py, smoke_test.py

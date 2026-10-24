@@ -6,7 +6,7 @@ import re
 import sys
 import time
 from contextlib import contextmanager
-from typing import Iterator
+from typing import Callable, Iterator
 
 import networkx as nx
 
@@ -83,14 +83,29 @@ def _signal(method: str, context: dict, chunks: list[dict]) -> int:
     return len(chunks)
 
 
-def run(question: str, mode: str = "auto", support_check: bool = True) -> Response:
-    """Answer a question; never raises (errors become an abstained Response)."""
+def _notify(progress: Callable[[str], None] | None, stage: str) -> None:
+    """Report a stage name to an optional UI callback, ignoring callback errors."""
+    if progress is None:
+        return
+    try:
+        progress(stage)
+    except Exception:
+        logger.debug("progress callback failed", exc_info=True)
+
+
+def run(question: str, mode: str = "auto", support_check: bool = True,
+        progress: Callable[[str], None] | None = None) -> Response:
+    """Answer a question; never raises (errors become an abstained Response).
+
+    progress, if given, receives "routing", "searching" and "verifying" as stages start.
+    """
     timings: dict[str, int] = {}
     route_info: dict = {}
     t_start = time.perf_counter()
     try:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
+        _notify(progress, "routing")
         with _timer(timings, "route"):
             if mode == "auto":
                 route_info = router.route_question(question)
@@ -104,11 +119,13 @@ def run(question: str, mode: str = "auto", support_check: bool = True) -> Respon
             return Response(route="abstain", answer="I can't answer that from the indexed documents.",
                             abstained=True, abstain_reason=reason, timings_ms=timings, router=route_info)
 
+        _notify(progress, "searching")
         with _timer(timings, "search"):
             result = engine.run_query(question, route)
         chunks = build_chunks(route, result.context)
         lookup = {c["chunk_id"]: c["text"] for c in chunks}
 
+        _notify(progress, "verifying")
         with _timer(timings, "answer"):
             gen = answer.generate_claims(question, chunks)
         with _timer(timings, "verify"):

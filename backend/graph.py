@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -165,6 +166,94 @@ def build_pyvis(
         " network.setOptions({ physics: false }); });"
     )
     return html.replace("return network;", f"{disable_physics}\n        return network;", 1)
+
+
+def community_color(comm: str) -> str:
+    """Public stable colour for a community id."""
+    return _community_color(comm)
+
+
+def _excerpt(text: str, needle: str, limit: int = 240) -> str:
+    """Sentence of text that mentions needle, else the opening characters."""
+    for sentence in re.split(r"(?<=[.!?])\s+", text):
+        if needle and needle.lower() in sentence.lower():
+            return sentence.strip()[:limit]
+    return text.strip()[:limit]
+
+
+def _sources_for(unit_ids: list[str], needle: str, text_units: dict[str, tuple[str, str]], k: int = 2) -> list[dict]:
+    """Up to k {doc, excerpt} items for the given text unit ids."""
+    out = []
+    for uid in unit_ids:
+        if uid in text_units:
+            doc, text = text_units[uid]
+            out.append({"doc": doc, "excerpt": _excerpt(text, needle)})
+        if len(out) >= k:
+            break
+    return out
+
+
+def evidence_order(graph: nx.Graph, nodes: list[str]) -> list[str]:
+    """Highlighted nodes ordered along the shortest path between the two best-connected ones."""
+    present = [n for n in nodes if n in graph]
+    if len(present) < 2:
+        return present
+    ranked = sorted(present, key=lambda n: graph.nodes[n].get("degree", 0), reverse=True)
+    sub = graph.subgraph(present)
+    u, v = ranked[0], ranked[1]
+    path = nx.shortest_path(sub, u, v) if nx.has_path(sub, u, v) else (
+        nx.shortest_path(graph, u, v) if nx.has_path(graph, u, v) else [u])
+    path = [n for n in path if n in present] or [u]
+    return path + [n for n in present if n not in path]
+
+
+def to_payload(
+    graph: nx.Graph,
+    highlights: dict | Any | None,
+    show_full: bool,
+    max_nodes: int = 300,
+    text_units: dict[str, tuple[str, str]] | None = None,
+    titles: dict[str, str] | None = None,
+    expanded: list[str] | None = None,
+) -> dict:
+    """Serialise the graph for the interactive component: nodes, edges, highlight, communities, options."""
+    if highlights is not None and hasattr(highlights, "model_dump"):
+        highlights = highlights.model_dump()
+    highlights = highlights or {}
+    text_units = text_units or {}
+    titles = titles or {}
+    h_nodes = [n for n in highlights.get("nodes", []) if n in graph]
+    pinned = set(h_nodes)
+    for n in expanded or []:
+        if n in graph:
+            pinned |= {n, *graph.neighbors(n)}
+    by_degree = sorted(graph.nodes, key=lambda n: graph.nodes[n].get("degree", 0), reverse=True)
+    keep = list(pinned) + [n for n in by_degree if n not in pinned][: max(0, max_nodes - len(pinned))]
+    sub = graph.subgraph(keep)
+
+    nodes = [{
+        "id": n, "label": n, "type": d.get("type", ""), "community": str(d.get("community", "-1")),
+        "degree": int(d.get("degree", 0)), "description": d.get("description", ""),
+        "sources": _sources_for(d.get("text_unit_ids", []), n, text_units),
+    } for n, d in sub.nodes(data=True)]
+    edges = [{
+        "id": d.get("id", f"{u}->{v}"), "source": u, "target": v,
+        "label": d.get("description", "")[:60], "description": d.get("description", ""),
+        "sources": _sources_for(d.get("text_unit_ids", []), u, text_units, k=1),
+    } for u, v, d in sub.edges(data=True)]
+    sizes: dict[str, int] = {}
+    for n in nodes:
+        sizes[n["community"]] = sizes.get(n["community"], 0) + 1
+    communities = [{"id": c, "title": titles.get(c, f"Community {c}"), "color": community_color(c), "size": s}
+                   for c, s in sorted(sizes.items(), key=lambda kv: -kv[1])]
+    return {
+        "nodes": nodes,
+        "edges": edges,
+        "highlight": {"nodes": h_nodes, "edges": list(highlights.get("edges", [])),
+                      "order": evidence_order(graph, h_nodes)},
+        "communities": communities,
+        "options": {"show_full": bool(show_full), "depth": 1, "pinned": sorted(pinned - set(h_nodes))},
+    }
 
 
 if __name__ == "__main__":
