@@ -34,10 +34,21 @@ class Source(BaseModel):
     text: str
 
 
+class TraceStep(BaseModel):
+    """One step of the retrieval path that supports an answer."""
+
+    kind: Literal["seed", "hop", "community", "chunk", "document"]
+    ids: List[str] = Field(default_factory=list)
+    note: str = ""
+
+
+Route = Literal["global", "local", "hybrid", "abstain", "basic", "graphrag_local", "graphrag_global"]
+
+
 class Response(BaseModel):
     """Full pipeline output for one question."""
 
-    route: Literal["global", "local", "abstain", "basic"]
+    route: Route
     answer: str
     abstained: bool = False
     abstain_reason: Optional[str] = None
@@ -48,3 +59,5 @@ class Response(BaseModel):
     router: Dict[str, object] = Field(default_factory=dict)
     search_answer: str = ""
     stats: Dict[str, int] = Field(default_factory=dict)
+    trace: List[TraceStep] = Field(default_factory=list)
+    retrieval: Dict[str, object] = Field(default_factory=dict)

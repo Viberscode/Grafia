@@ -3,59 +3,16 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from fakes import FakeVectors, graphrag_tables
 
 from backend.stores import loader
 from backend.stores.graph_store import MemoryStore, Neo4jStore
-from backend.stores.vector_store import Hit
-
-
-class FakeVectors:
-    """In-memory vector store scoring by word overlap."""
-
-    def __init__(self) -> None:
-        """Start empty."""
-        self.cols: dict[str, dict[str, tuple[str, dict]]] = {}
-
-    def upsert(self, collection: str, ids: list[str], texts: list[str], metadatas: list[dict]) -> None:
-        """Insert or replace."""
-        self.cols.setdefault(collection, {}).update({i: (t, m) for i, t, m in zip(ids, texts, metadatas)})
-
-    def search(self, collection: str, text: str, k: int = 5) -> list[Hit]:
-        """Rank by shared lowercase words."""
-        q = set(text.lower().split())
-        hits = [Hit(i, t, len(q & set(t.lower().split())) / max(len(q), 1), m)
-                for i, (t, m) in self.cols.get(collection, {}).items()]
-        return sorted(hits, key=lambda h: -h.score)[:k]
-
-    def counts(self) -> dict[str, int]:
-        """Size per collection."""
-        return {c: len(v) for c, v in self.cols.items()}
-
-    def clear(self) -> None:
-        """Drop everything."""
-        self.cols = {}
 
 
 @pytest.fixture
 def tables() -> dict[str, pd.DataFrame]:
-    """GraphRAG-shaped tables: 2 docs, 3 chunks, 4 entities, 3 relationships, 2 communities."""
-    return {
-        "documents": pd.DataFrame({"id": ["d1", "d2"], "title": ["one.txt", "two.txt"]}),
-        "text_units": pd.DataFrame({"id": ["t1", "t2", "t3"], "document_id": ["d1", "d1", "d2"],
-                                    "text": ["Alpha works with Beta.", "Beta funds Gamma.", "Gamma hires Delta."]}),
-        "entities": pd.DataFrame({"id": ["u1", "u2", "u3", "u4"], "title": ["ALPHA", "BETA", "GAMMA", "DELTA"],
-                                  "type": ["org"] * 4, "description": ["a", "b", "c", "d"], "degree": [1, 2, 2, 1],
-                                  "text_unit_ids": [["t1"], ["t1", "t2"], ["t2", "t3"], ["t3"]]}),
-        "relationships": pd.DataFrame({"id": ["r1", "r2", "r3"], "source": ["ALPHA", "BETA", "GAMMA"],
-                                       "target": ["BETA", "GAMMA", "DELTA"], "description": ["ab", "bc", "cd"],
-                                       "weight": [1.0, 2.0, 1.0], "text_unit_ids": [["t1"], ["t2"], []]}),
-        "communities": pd.DataFrame({"community": [0, 1], "level": [0, 0], "title": ["C0", "C1"],
-                                     "entity_ids": [["u1", "u2"], ["u3", "u4"]]}),
-        "community_reports": pd.DataFrame({"community": [0, 1], "level": [0, 0], "title": ["Alpha and Beta", "Gamma"],
-                                           "summary": ["s0", "s1"], "full_content": ["Alpha Beta report",
-                                                                                      "Gamma Delta report"],
-                                           "rank": [5.0, 4.0]}),
-    }
+    """GraphRAG-shaped sample tables."""
+    return graphrag_tables()
 
 
 def test_loader_counts_match_parquet(tables: dict[str, pd.DataFrame]) -> None:
