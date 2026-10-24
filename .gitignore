@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+cache.db
+out/
+myproj/cache/
+myproj/logs/
+myproj/output/
+myproj/index_run.log
+eval/results/raw.jsonl

@@ -1,0 +1,9 @@
+You are building ThemeGraph, a GraphRAG-based Q&A app. Follow these rules:
+- Python 3.11+, type hints everywhere, small functions, one-line docstrings.
+- All API boundary types come from backend/contracts.py (pydantic).
+- All LLM calls go through backend/llm.py (cached, retried). Never call an LLM SDK elsewhere.
+- Never assume GraphRAG column or function names: read the installed package and docs/schema_notes.md first.
+- pipeline.run never raises: catch errors and return an abstained Response with the reason.
+- Use logging, not print. No hard-coded keys. Read config from .env via backend/config.py.
+- After each change, run the acceptance command given in the prompt and report the result.
+- Keep changes minimal: do not refactor files the prompt does not mention.

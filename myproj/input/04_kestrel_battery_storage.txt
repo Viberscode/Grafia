@@ -1,0 +1,11 @@
+Kestrel Battery Storage Project
+
+The Kestrel Battery Storage Project is a 300 megawatt, 1,200 megawatt-hour lithium iron phosphate battery facility built on the site of a former rail yard in the Kestrel district of Aurora Bay. It is owned and operated by Aurora Bay Power and Light, the city's municipal utility.
+
+The project was a direct response to the Raman Report on the 2019 Harbor Blackout, which identified the lack of backup storage as the main weakness of the city's grid. Dr. Priya Raman served on the technical advisory board for the project.
+
+The battery cells were supplied by VoltCore Systems. Grid integration software was developed by Gridwise Analytics, a start-up founded by former Coastal State University researchers. The software forecasts output from the Northwind Offshore Wind Farm and charges the batteries when wind output exceeds demand.
+
+Aurora Bay Power and Light's general manager, Sandra Lee, said Kestrel would allow the utility to retire the Saltmarsh Gas Plant on schedule. The project received 120 million dollars from the National Clean Grid Fund and the remainder from the Aurora Bay Green Bond.
+
+Kestrel entered service in June 2024. During a heat wave in July 2025, it supplied power for four hours at peak demand and prevented rolling outages.
