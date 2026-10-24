@@ -19,7 +19,7 @@ mock:
 	MOCK=1 streamlit run app.py
 
 eval:
-	$(PY) -m eval.run
+	$(PY) -m eval.run --resume --sleep 4
 	$(PY) -m eval.report
 
 smoke:

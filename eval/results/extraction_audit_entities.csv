@@ -1,0 +1,193 @@
+id,title,type,description,possible_duplicates,source_chunk,type_correct,duplicate
+22,HELIX TURBINES,ORGANIZATION,"Helix Turbines is a company that serves as a key supplier for the Northwind Offshore Wind Farm project, providing the 40 floating turbines utilized in the development. Additionally, Helix Turbines is responsible for delivering the remaining floating turbines to the Port Linden Marine Terminal. Beyon",,"Northwind Offshore Wind Farm
+
+The Northwind Offshore Wind Farm is a 600 megawatt project located 25 kilometres off the coast of Aurora Bay. It is developed by Tidewater Energy, a renewable developer headquartered in Port Linden, under a 20-year power purchase agreement with Aurora Bay Power and Light.
+
+Tidewater Energy's chief executive, James Okafor, signed the agreement with Mayor Elena Vasquez in October 2022. The project uses 40 floating turbines supplied by Helix Turbines, which allow installation in deeper water where winds are stronger and visual impact from the shore is lower.
+
+Constru",,
+27,GRIDWISE ANALYTICS,ORGANIZATION,"Gridwise Analytics is a start-up company founded in 2021 by Tomas Berg and Aisha Karim, who are former Coastal State University researchers. The company was established to commercialize the university laboratory's advanced wind forecasting models and developed specialized grid integration software f",,"Kestrel Battery Storage Project
+
+The Kestrel Battery Storage Project is a 300 megawatt, 1,200 megawatt-hour lithium iron phosphate battery facility built on the site of a former rail yard in the Kestrel district of Aurora Bay. It is owned and operated by Aurora Bay Power and Light, the city's municipal utility.
+
+The project was a direct response to the Raman Report on the 2019 Harbor Blackout, which identified the lack of backup storage as the main weakness of the city's grid. Dr. Priya Raman served on the technical advisory board for the project.
+
+The battery cells were supplied by VoltCore S",,
+34,HARBOR BLACKOUT,EVENT,"A blackout in 2019 that hit families hard, after which the GreenHomes program helped lower energy bills.",2019 HARBOR BLACKOUT; THE 2019 HARBOR BLACKOUT,"GreenHomes Retrofit Program
+
+The GreenHomes Retrofit Program is the building efficiency pillar of the Aurora Bay Clean Energy Plan. It offers grants and low-interest loans to homeowners and landlords for insulation, heat pumps, and rooftop solar panels.
+
+The program is administered by the Office of Sustainability under Marcus Oyelaran and delivered through a network of certified contractors. Community outreach is led by the Eastside Neighbourhood Trust, a non-profit run by Rosa Delgado, which focuses on low-income and renter households.
+
+By the end of 2025 the program had retrofitted 14,000 ho",,
+15,DR. PRIYA RAMAN,PERSON,"Dr. Priya Raman is a grid engineer and the Director of the Grid Resilience Lab at Coastal State University. She has played a prominent role in energy sector analysis and infrastructure evaluations. Notably, Dr. Raman led an independent review investigating a major blackout, during which she authored",PRIYA RAMAN,"The 2019 Harbor Blackout
+
+On 14 August 2019 a heat wave pushed electricity demand in Aurora Bay to a record peak. The aging Saltmarsh Gas Plant, owned by Aurora Bay Power and Light, tripped offline when its cooling system failed. Within an hour, cascading failures at two substations left 60,000 households without power for three days.
+
+An independent review led by grid engineer Dr. Priya Raman of Coastal State University found that the city depended on a single fossil-fuel plant with no backup storage. The Raman Report recommended three actions: add large-scale battery storage, diversify gener",,
+18,THE 2019 HARBOR BLACKOUT,EVENT,"A major power outage lasting three days that affected 60,000 households in Aurora Bay following a heat wave and a failure at the Saltmarsh Gas Plant",2019 HARBOR BLACKOUT; HARBOR BLACKOUT,"The 2019 Harbor Blackout
+
+On 14 August 2019 a heat wave pushed electricity demand in Aurora Bay to a record peak. The aging Saltmarsh Gas Plant, owned by Aurora Bay Power and Light, tripped offline when its cooling system failed. Within an hour, cascading failures at two substations left 60,000 households without power for three days.
+
+An independent review led by grid engineer Dr. Priya Raman of Coastal State University found that the city depended on a single fossil-fuel plant with no backup storage. The Raman Report recommended three actions: add large-scale battery storage, diversify gener",,
+29,NATIONAL CLEAN GRID FUND,ORGANIZATION,"The National Clean Grid Fund is an organization and federal program that provides financial support and grants for clean energy and grid modernization initiatives. Notably, the National Clean Grid Fund provides funding to the Grid Resilience Lab and awarded a 120 million dollar grant that complement",,"Kestrel Battery Storage Project
+
+The Kestrel Battery Storage Project is a 300 megawatt, 1,200 megawatt-hour lithium iron phosphate battery facility built on the site of a former rail yard in the Kestrel district of Aurora Bay. It is owned and operated by Aurora Bay Power and Light, the city's municipal utility.
+
+The project was a direct response to the Raman Report on the 2019 Harbor Blackout, which identified the lack of backup storage as the main weakness of the city's grid. Dr. Priya Raman served on the technical advisory board for the project.
+
+The battery cells were supplied by VoltCore S",,
+32,ROSA DELGADO,PERSON,Run leader of the Eastside Neighbourhood Trust who responded to criticisms regarding the GreenHomes Retrofit Program.,,"GreenHomes Retrofit Program
+
+The GreenHomes Retrofit Program is the building efficiency pillar of the Aurora Bay Clean Energy Plan. It offers grants and low-interest loans to homeowners and landlords for insulation, heat pumps, and rooftop solar panels.
+
+The program is administered by the Office of Sustainability under Marcus Oyelaran and delivered through a network of certified contractors. Community outreach is led by the Eastside Neighbourhood Trust, a non-profit run by Rosa Delgado, which focuses on low-income and renter households.
+
+By the end of 2025 the program had retrofitted 14,000 ho",,
+30,KESTREL,LOCATION,"Kestrel is a district located within Aurora Bay. It is notable for being the site where the Kestrel Battery Storage Project is built. Additionally, Kestrel is recognized as a district within Aurora Bay where older apartment buildings have experienced the largest energy savings.",KESTREL BATTERY STORAGE PROJECT,"Kestrel Battery Storage Project
+
+The Kestrel Battery Storage Project is a 300 megawatt, 1,200 megawatt-hour lithium iron phosphate battery facility built on the site of a former rail yard in the Kestrel district of Aurora Bay. It is owned and operated by Aurora Bay Power and Light, the city's municipal utility.
+
+The project was a direct response to the Raman Report on the 2019 Harbor Blackout, which identified the lack of backup storage as the main weakness of the city's grid. Dr. Priya Raman served on the technical advisory board for the project.
+
+The battery cells were supplied by VoltCore S",,
+10,MARCUS OYELARAN,PERSON,"Marcus Oyelaran serves as the Director of Aurora Bay's Office of Sustainability, also referred to as the Head and leader of the office. In this role, Marcus Oyelaran oversees the administration of the GreenHomes Retrofit Program and provides reports on the renewable sources that supply electricity t",,"The Aurora Bay Clean Energy Plan
+
+In March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez championed the plan after the 2019 Harbor Blackout left 60,000 households without power for three days.
+
+The plan has three pillars. The first pillar is offshore wind, delivered through the Northwind Offshore Wind Farm developed by Tidewater Energy. The second pillar is grid storage, delivered through the ",,
+1,AURORA BAY CITY COUNCIL,ORGANIZATION,"The Aurora Bay City Council is the governing municipal body of Aurora Bay. In March 2021, the council officially adopted the Aurora Bay Clean Energy Plan. Additionally, the Aurora Bay City Council is the legislative body before which Dr. Raman testified, and it is the municipal authority where the C",AURORA BAY,"The Aurora Bay Clean Energy Plan
+
+In March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez championed the plan after the 2019 Harbor Blackout left 60,000 households without power for three days.
+
+The plan has three pillars. The first pillar is offshore wind, delivered through the Northwind Offshore Wind Farm developed by Tidewater Energy. The second pillar is grid storage, delivered through the ",,
+40,GORDON HALE,PERSON,Gordon Hale serves as a spokesperson for the Aurora Bay Taxpayers Alliance.,,"Financing the Transition: The Aurora Bay Green Bond
+
+In May 2022 the City of Aurora Bay issued the Aurora Bay Green Bond, a 400 million dollar municipal bond dedicated to clean energy infrastructure. The bond was underwritten by Meridian Capital and certified under the International Green Bond Standard.
+
+Proceeds were allocated as follows: 180 million dollars to the Northwind Offshore Wind Farm transmission connection, 130 million dollars to the Kestrel Battery Storage Project, and 90 million dollars to the GreenHomes Retrofit Program.
+
+City treasurer David Chen said the bond was oversubscribe",,
+13,AURORA BAY,LOCATION,"Aurora Bay is a coastal city undergoing a significant energy transition, guided by a local energy plan and its city council. Historically, the city experienced a record peak in electricity demand followed by a major blackout in 2019, at which time its electricity was supplied by the Saltmarsh Gas Pl",AURORA BAY CLEAN ENERGY PLAN; AURORA BAY CITY COUNCIL; AURORA BAY POWER AND LIGHT; AURORA BAY GREEN BOND; AURORA BAY TAXPAYERS ALLIANCE; CITY OF AURORA BAY,"The 2019 Harbor Blackout
+
+On 14 August 2019 a heat wave pushed electricity demand in Aurora Bay to a record peak. The aging Saltmarsh Gas Plant, owned by Aurora Bay Power and Light, tripped offline when its cooling system failed. Within an hour, cascading failures at two substations left 60,000 households without power for three days.
+
+An independent review led by grid engineer Dr. Priya Raman of Coastal State University found that the city depended on a single fossil-fuel plant with no backup storage. The Raman Report recommended three actions: add large-scale battery storage, diversify gener",,
+46,NORTHWIND FISHERIES AGREEMENT,POLICY,"Agreement creating a 15 million dollar fisheries compensation fund, open navigation corridors, and a monitoring programme",,"The Northwind Fisheries Dispute
+
+When Tidewater Energy published the site plan for the Northwind Offshore Wind Farm in 2022, the Coastal Fishermen's Association objected. The association's president, Liam Murphy, said that the planned turbine array overlapped with scallop and cod grounds that had supported local families for generations.
+
+The association filed a formal objection with the Aurora Bay City Council and organised a protest flotilla in Aurora Bay harbour in January 2023. The Coastal Climate Coalition, normally a supporter of the wind farm, called for a fair settlement.
+
+Mayor Elena ",,
+17,RAMAN REPORT,POLICY,"The Raman Report is an independent review report, led by Dr. Priya Raman, that investigates the 2019 Harbor Blackout. The report identifies the lack of backup storage as the primary weakness in the city's power grid. To address these vulnerabilities and prevent future failures, the Raman Report reco",,"The 2019 Harbor Blackout
+
+On 14 August 2019 a heat wave pushed electricity demand in Aurora Bay to a record peak. The aging Saltmarsh Gas Plant, owned by Aurora Bay Power and Light, tripped offline when its cooling system failed. Within an hour, cascading failures at two substations left 60,000 households without power for three days.
+
+An independent review led by grid engineer Dr. Priya Raman of Coastal State University found that the city depended on a single fossil-fuel plant with no backup storage. The Raman Report recommended three actions: add large-scale battery storage, diversify gener",,
+49,PRIYA RAMAN,PERSON,A doctor from Coastal State University who described Aurora Bay as a national example of grid rebuilding.,DR. PRIYA RAMAN,"Aurora Bay Clean Energy Scorecard 2025
+
+The Office of Sustainability published its fourth annual scorecard in January 2026. Director Marcus Oyelaran reported that renewable sources supplied 52 percent of Aurora Bay's electricity in 2025, up from 18 percent in 2020.
+
+Key milestones in 2025 included first power from the Northwind Offshore Wind Farm, the Kestrel Battery Storage Project carrying the grid through the July heat wave, and the GreenHomes Retrofit Program passing 14,000 retrofitted homes.
+
+The scorecard identified three risks. First, delays at Helix Turbines could push back the Northwi",,
+36,INTERNATIONAL GREEN BOND STANDARD,POLICY,The standard under which the Aurora Bay Green Bond was certified,,"Financing the Transition: The Aurora Bay Green Bond
+
+In May 2022 the City of Aurora Bay issued the Aurora Bay Green Bond, a 400 million dollar municipal bond dedicated to clean energy infrastructure. The bond was underwritten by Meridian Capital and certified under the International Green Bond Standard.
+
+Proceeds were allocated as follows: 180 million dollars to the Northwind Offshore Wind Farm transmission connection, 130 million dollars to the Kestrel Battery Storage Project, and 90 million dollars to the GreenHomes Retrofit Program.
+
+City treasurer David Chen said the bond was oversubscribe",,
+41,GRID RESILIENCE LAB,ORGANIZATION,"Research lab at Coastal State University directed by Dr. Priya Raman, focused on energy and grid research",,"Coastal State University Grid Research
+
+Coastal State University's Grid Resilience Lab, directed by Dr. Priya Raman, became the main research partner for Aurora Bay's energy transition. The lab first gained public attention for the Raman Report, its independent review of the 2019 Harbor Blackout.
+
+In 2021 two of Raman's doctoral students, Tomas Berg and Aisha Karim, founded Gridwise Analytics to commercialise the lab's wind forecasting models. Gridwise Analytics later won the contract to build the control software for the Kestrel Battery Storage Project.
+
+The lab also evaluated the GreenHomes ",,
+20,PORT LINDEN,LOCATION,City where Tidewater Energy is headquartered and where the Port Linden Marine Terminal is located.,PORT LINDEN MARINE TERMINAL,"Northwind Offshore Wind Farm
+
+The Northwind Offshore Wind Farm is a 600 megawatt project located 25 kilometres off the coast of Aurora Bay. It is developed by Tidewater Energy, a renewable developer headquartered in Port Linden, under a 20-year power purchase agreement with Aurora Bay Power and Light.
+
+Tidewater Energy's chief executive, James Okafor, signed the agreement with Mayor Elena Vasquez in October 2022. The project uses 40 floating turbines supplied by Helix Turbines, which allow installation in deeper water where winds are stronger and visual impact from the shore is lower.
+
+Constru",,
+37,NORTHWIND OFFSHORE WIND FARM TRANSMISSION CONNECTION,PROJECT,Infrastructure project that received 180 million dollars from the Aurora Bay Green Bond proceeds,NORTHWIND OFFSHORE WIND FARM,"Financing the Transition: The Aurora Bay Green Bond
+
+In May 2022 the City of Aurora Bay issued the Aurora Bay Green Bond, a 400 million dollar municipal bond dedicated to clean energy infrastructure. The bond was underwritten by Meridian Capital and certified under the International Green Bond Standard.
+
+Proceeds were allocated as follows: 180 million dollars to the Northwind Offshore Wind Farm transmission connection, 130 million dollars to the Kestrel Battery Storage Project, and 90 million dollars to the GreenHomes Retrofit Program.
+
+City treasurer David Chen said the bond was oversubscribe",,
+33,EASTSIDE,LOCATION,A district in Aurora Bay where older apartment buildings saw the largest energy savings.,EASTSIDE NEIGHBOURHOOD TRUST,"GreenHomes Retrofit Program
+
+The GreenHomes Retrofit Program is the building efficiency pillar of the Aurora Bay Clean Energy Plan. It offers grants and low-interest loans to homeowners and landlords for insulation, heat pumps, and rooftop solar panels.
+
+The program is administered by the Office of Sustainability under Marcus Oyelaran and delivered through a network of certified contractors. Community outreach is led by the Eastside Neighbourhood Trust, a non-profit run by Rosa Delgado, which focuses on low-income and renter households.
+
+By the end of 2025 the program had retrofitted 14,000 ho",,
+44,THE NORTHWIND FISHERIES DISPUTE,EVENT,A dispute between coastal fishermen and an offshore wind farm developer regarding fishing grounds overlap,,"The Northwind Fisheries Dispute
+
+When Tidewater Energy published the site plan for the Northwind Offshore Wind Farm in 2022, the Coastal Fishermen's Association objected. The association's president, Liam Murphy, said that the planned turbine array overlapped with scallop and cod grounds that had supported local families for generations.
+
+The association filed a formal objection with the Aurora Bay City Council and organised a protest flotilla in Aurora Bay harbour in January 2023. The Coastal Climate Coalition, normally a supporter of the wind farm, called for a fair settlement.
+
+Mayor Elena ",,
+9,OFFICE OF SUSTAINABILITY,ORGANIZATION,"The Office of Sustainability is a government and administrative city office directed by Marcus Oyelaran. In addition to employing him, the office operates under his leadership to administer the GreenHomes Retrofit Program. Furthermore, the Office of Sustainability is responsible for monitoring the p",,"The Aurora Bay Clean Energy Plan
+
+In March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez championed the plan after the 2019 Harbor Blackout left 60,000 households without power for three days.
+
+The plan has three pillars. The first pillar is offshore wind, delivered through the Northwind Offshore Wind Farm developed by Tidewater Energy. The second pillar is grid storage, delivered through the ",,
+2,ELENA VASQUEZ,PERSON,"Elena Vasquez is a former city councillor and the Mayor of Aurora Bay. Having made grid resilience the central focus of her political platform, she won the 2020 mayoral campaign and subsequently championed the Aurora Bay Clean Energy Plan following the 2019 Harbor Blackout. As Mayor, Elena Vasquez h",,"The Aurora Bay Clean Energy Plan
+
+In March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez championed the plan after the 2019 Harbor Blackout left 60,000 households without power for three days.
+
+The plan has three pillars. The first pillar is offshore wind, delivered through the Northwind Offshore Wind Farm developed by Tidewater Energy. The second pillar is grid storage, delivered through the ",,
+35,CITY OF AURORA BAY,ORGANIZATION,The municipal government of Aurora Bay that issued the Aurora Bay Green Bond,AURORA BAY,"Financing the Transition: The Aurora Bay Green Bond
+
+In May 2022 the City of Aurora Bay issued the Aurora Bay Green Bond, a 400 million dollar municipal bond dedicated to clean energy infrastructure. The bond was underwritten by Meridian Capital and certified under the International Green Bond Standard.
+
+Proceeds were allocated as follows: 180 million dollars to the Northwind Offshore Wind Farm transmission connection, 130 million dollars to the Kestrel Battery Storage Project, and 90 million dollars to the GreenHomes Retrofit Program.
+
+City treasurer David Chen said the bond was oversubscribe",,
+16,COASTAL STATE UNIVERSITY,ORGANIZATION,"Coastal State University is an academic institution that plays a significant role in research, environmental evaluation, and technological innovation. It serves as the employer and academic home for Dr. Priya Raman and is associated with her ongoing work. Additionally, the university is home to the ",,"The 2019 Harbor Blackout
+
+On 14 August 2019 a heat wave pushed electricity demand in Aurora Bay to a record peak. The aging Saltmarsh Gas Plant, owned by Aurora Bay Power and Light, tripped offline when its cooling system failed. Within an hour, cascading failures at two substations left 60,000 households without power for three days.
+
+An independent review led by grid engineer Dr. Priya Raman of Coastal State University found that the city depended on a single fossil-fuel plant with no backup storage. The Raman Report recommended three actions: add large-scale battery storage, diversify gener",,
+21,JAMES OKAFOR,PERSON,"James Okafor is the chief executive and representative of Tidewater Energy. In his professional capacity, he actively participated in the mediation process and officially signed the agreement on behalf of Tidewater Energy with Mayor Elena Vasquez.",,"Northwind Offshore Wind Farm
+
+The Northwind Offshore Wind Farm is a 600 megawatt project located 25 kilometres off the coast of Aurora Bay. It is developed by Tidewater Energy, a renewable developer headquartered in Port Linden, under a 20-year power purchase agreement with Aurora Bay Power and Light.
+
+Tidewater Energy's chief executive, James Okafor, signed the agreement with Mayor Elena Vasquez in October 2022. The project uses 40 floating turbines supplied by Helix Turbines, which allow installation in deeper water where winds are stronger and visual impact from the shore is lower.
+
+Constru",,
+43,AISHA KARIM,PERSON,Doctoral student of Dr. Raman who co-founded Gridwise Analytics in 2021,,"Coastal State University Grid Research
+
+Coastal State University's Grid Resilience Lab, directed by Dr. Priya Raman, became the main research partner for Aurora Bay's energy transition. The lab first gained public attention for the Raman Report, its independent review of the 2019 Harbor Blackout.
+
+In 2021 two of Raman's doctoral students, Tomas Berg and Aisha Karim, founded Gridwise Analytics to commercialise the lab's wind forecasting models. Gridwise Analytics later won the contract to build the control software for the Kestrel Battery Storage Project.
+
+The lab also evaluated the GreenHomes ",,
+31,EASTSIDE NEIGHBOURHOOD TRUST,ORGANIZATION,"A non-profit run by Rosa Delgado that leads community outreach for the GreenHomes Retrofit Program, focusing on low-income and renter households.",EASTSIDE,"GreenHomes Retrofit Program
+
+The GreenHomes Retrofit Program is the building efficiency pillar of the Aurora Bay Clean Energy Plan. It offers grants and low-interest loans to homeowners and landlords for insulation, heat pumps, and rooftop solar panels.
+
+The program is administered by the Office of Sustainability under Marcus Oyelaran and delivered through a network of certified contractors. Community outreach is led by the Eastside Neighbourhood Trust, a non-profit run by Rosa Delgado, which focuses on low-income and renter households.
+
+By the end of 2025 the program had retrofitted 14,000 ho",,
+24,MERIDIAN CAPITAL,ORGANIZATION,"Meridian Capital is a financial institution and private investor that plays an active role in financing major environmental and energy projects. Specifically, Meridian Capital underwrote the Aurora Bay Green Bond and made a separate private equity investment in Tidewater Energy. Additionally, the in",,"Northwind Offshore Wind Farm
+
+The Northwind Offshore Wind Farm is a 600 megawatt project located 25 kilometres off the coast of Aurora Bay. It is developed by Tidewater Energy, a renewable developer headquartered in Port Linden, under a 20-year power purchase agreement with Aurora Bay Power and Light.
+
+Tidewater Energy's chief executive, James Okafor, signed the agreement with Mayor Elena Vasquez in October 2022. The project uses 40 floating turbines supplied by Helix Turbines, which allow installation in deeper water where winds are stronger and visual impact from the shore is lower.
+
+Constru",,
+5,KESTREL BATTERY STORAGE PROJECT,PROJECT,"The Kestrel Battery Storage Project is a 300-megawatt, 1,200-megawatt-hour lithium iron phosphate battery facility located in Aurora Bay. Designed to provide essential backup storage and enhance grid stability, the project delivers the second pillar of the Aurora Bay Clean Energy Plan. 
+
+The facilit",KESTREL,"The Aurora Bay Clean Energy Plan
+
+In March 2021 the Aurora Bay City Council adopted the Aurora Bay Clean Energy Plan, a policy that commits the coastal city to generating 80 percent of its electricity from renewable sources by 2030 and reaching net-zero emissions by 2040. Mayor Elena Vasquez championed the plan after the 2019 Harbor Blackout left 60,000 households without power for three days.
+
+The plan has three pillars. The first pillar is offshore wind, delivered through the Northwind Offshore Wind Farm developed by Tidewater Energy. The second pillar is grid storage, delivered through the ",,

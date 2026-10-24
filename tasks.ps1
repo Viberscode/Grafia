@@ -10,7 +10,7 @@ switch ($Task) {
     "graph"   { & $py -m backend.graph }
     "app"     { & $py -m streamlit run app.py }
     "mock"    { $env:MOCK = "1"; & $py -m streamlit run app.py; Remove-Item Env:MOCK }
-    "eval"    { & $py -m eval.run; & $py -m eval.report }
+    "eval"    { & $py -m eval.run --resume --sleep 4; & $py -m eval.report }
     "smoke"   { & $py scripts/smoke_test.py }
     "test"    { $env:OFFLINE = "1"; & $py -m pytest -q tests; Remove-Item Env:OFFLINE }
 }

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import difflib
 import html
+import json
 import logging
 import re
 from pathlib import Path
@@ -19,6 +20,8 @@ from ui.data import DataSource
 logger = logging.getLogger(__name__)
 
 SUMMARY_CSV = Path(PROJECT_ROOT) / "eval" / "results" / "summary.csv"
+PRECISION_JSON = Path(PROJECT_ROOT) / "eval" / "results" / "extraction_precision.json"
+QUALITY = ["correct", "evidence_recall", "quote_validity", "router_acc", "abstain_precision", "abstain_recall"]
 
 
 def _plain(text: str) -> str:
@@ -99,11 +102,33 @@ def render(data: DataSource) -> None:
     st.caption("Highlighted words appear in only one of the two answers; bold documents are cited by one side only.")
 
 
+def extraction_precision() -> None:
+    """Metrics from the manual extraction audit, if it has been scored."""
+    if not PRECISION_JSON.exists():
+        st.caption("Extraction audit not scored yet: run `python -m eval.extraction_audit`, fill the CSVs, "
+                   "then `python -m eval.extraction_audit --score`.")
+        return
+    try:
+        p = json.loads(PRECISION_JSON.read_text(encoding="utf-8"))
+    except Exception:
+        logger.exception("Could not read %s", PRECISION_JSON)
+        return
+    st.markdown("##### Extraction audit")
+    cols = st.columns(3)
+    for col, (key, label, n_key) in zip(cols, [
+            ("relationship_precision", "Relationship precision", "relationships_judged"),
+            ("entity_type_precision", "Entity type precision", "entities_judged"),
+            ("duplicate_rate", "Duplicate entity rate", "entities_judged")]):
+        value = p.get(key)
+        col.metric(label, "-" if value is None else f"{value:.0%}", help=f"{p.get(n_key, 0)} judged by hand")
+
+
 def results() -> None:
-    """Benchmark table and chart from eval/results/summary.csv."""
+    """Benchmark table and charts from eval/results/summary.csv, plus extraction precision."""
     if not SUMMARY_CSV.exists():
         st.info("No benchmark results yet. Run `python -m eval.run` then `python -m eval.report` "
                 "to create `eval/results/summary.csv`.", icon=":material/science:")
+        extraction_precision()
         return
     try:
         df = pd.read_csv(SUMMARY_CSV)
@@ -111,9 +136,19 @@ def results() -> None:
         logger.exception("Could not read %s", SUMMARY_CSV)
         st.error("Could not read the benchmark summary file.")
         return
-    st.dataframe(df, hide_index=True, width="stretch")
-    overall = df[df["type"] == "ALL"] if "type" in df.columns else df
-    cols = [c for c in ("evidence_recall", "abstain_precision") if c in overall.columns]
-    if cols and "system" in overall.columns:
-        st.markdown("##### Evidence recall and abstain precision by system")
-        st.bar_chart(overall.set_index("system")[cols], stack=False, height=300)
+    types = [t for t in ["ALL", "thematic", "factual", "multihop", "unanswerable"] if t in set(df.get("type", []))]
+    qtype = st.segmented_control("Question type", types, default=types[0] if types else None,
+                                 key="results_type") or (types[0] if types else None)
+    view = df[df["type"] == qtype] if qtype else df
+    st.dataframe(view, hide_index=True, width="stretch")
+    if "system" in view.columns and not view.empty:
+        quality = [c for c in QUALITY if c in view.columns and view[c].notna().any()]
+        if quality:
+            st.markdown("##### Answer quality by system (higher is better)")
+            st.bar_chart(view.set_index("system")[quality], stack=False, height=300)
+        cost = [c for c in ("latency_ms", "llm_calls") if c in view.columns and view[c].notna().any()]
+        for c, col in zip(cost, st.columns(len(cost) or 1)):
+            with col:
+                st.markdown(f"##### {'Mean latency (ms)' if c == 'latency_ms' else 'LLM calls per question'}")
+                st.bar_chart(view.set_index("system")[[c]], height=220)
+    extraction_precision()

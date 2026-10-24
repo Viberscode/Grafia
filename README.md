@@ -95,17 +95,30 @@ LanceDB text-unit embeddings. Highlights and sources come from the NetworkX grap
 
 ## Results
 
-Run `.\tasks.ps1 eval` (or `make eval`) and paste `eval/results/summary.md` here.
+Run `.\tasks.ps1 eval`, then `python -m eval.write_readme_table` to replace the block below.
 
-| system | type | correct | evidence_recall | quote_validity | router_acc | abstain_recall | latency_ms |
-|---|---|---|---|---|---|---|---|
-| basic | ALL | - | - | - | - | - | - |
-| local_only | ALL | - | - | - | - | - | - |
-| global_only | ALL | - | - | - | - | - | - |
-| routed | ALL | - | - | - | - | - | - |
+<!-- RESULTS:START -->
+#### All questions
 
-Metric notes: evidence recall is measured at the document level (`gold_docs` in `eval/questions.jsonl`),
-because GraphRAG chunk ids change on every re-index. Correctness is an LLM judge against the reference answer,
+| system | n | correct | evidence_recall | quote_validity | verified_claims | router_acc | abstain_precision | abstain_recall | latency_ms | llm_calls |
+|---|---|---|---|---|---|---|---|---|---|---|
+| graphrag_basic | 4 | 0.75 | 0.60 | 1.00 | 3.50 | - | - | - | 34773 | 2.00 |
+| graphrag_global | 4 | 0.50 | 0.83 | 1.00 | 3.00 | - | - | - | 25624 | 1.50 |
+| graphrag_local | 4 | 0.50 | 0.69 | 1.00 | 3.25 | - | - | - | 39993 | 2.00 |
+| themegraph_routed | 4 | 0.25 | 0.94 | 0.95 | 2.75 | 1.00 | - | - | 23461 | 3.00 |
+
+#### Thematic questions
+
+| system | n | correct | evidence_recall | quote_validity | verified_claims | router_acc | abstain_precision | abstain_recall | latency_ms | llm_calls |
+|---|---|---|---|---|---|---|---|---|---|---|
+| graphrag_basic | 4 | 0.75 | 0.60 | 1.00 | 3.50 | - | - | - | 34773 | 2.00 |
+| graphrag_global | 4 | 0.50 | 0.83 | 1.00 | 3.00 | - | - | - | 25624 | 1.50 |
+| graphrag_local | 4 | 0.50 | 0.69 | 1.00 | 3.25 | - | - | - | 39993 | 2.00 |
+| themegraph_routed | 4 | 0.25 | 0.94 | 0.95 | 2.75 | 1.00 | - | - | 23461 | 3.00 |
+<!-- RESULTS:END -->
+
+Metric notes: evidence recall is measured against gold chunks (`gold_chunk_ids`, or every chunk of the
+`gold_docs` when a question has none). Correctness is an LLM judge against the reference answer,
 with the systems shown in a seeded random order.
 
 ## Limitations
