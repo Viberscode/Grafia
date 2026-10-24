@@ -8,10 +8,13 @@ from dotenv import load_dotenv
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
-GRAPHRAG_API_KEY: str | None = os.getenv("GRAPHRAG_API_KEY")
-LLM_MODEL_CHEAP: str = os.getenv("LLM_MODEL_CHEAP", "gpt-4o-mini")
-LLM_MODEL_STRONG: str = os.getenv("LLM_MODEL_STRONG", "gpt-4o")
-LLM_BASE_URL: str | None = os.getenv("LLM_BASE_URL") or None
+GEMINI_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+GEMINI_API_KEY: str | None = os.getenv("GEMINI_API_KEY")
+GRAPHRAG_API_KEY: str | None = GEMINI_API_KEY
+LLM_MODEL_CHEAP: str = os.getenv("LLM_MODEL_CHEAP", "gemini-2.5-flash-lite")
+LLM_MODEL_STRONG: str = os.getenv("LLM_MODEL_STRONG", "gemini-2.5-flash-lite")
+LLM_BASE_URL: str = os.getenv("LLM_BASE_URL") or GEMINI_OPENAI_BASE_URL
 GRAPH_ROOT: Path = (PROJECT_ROOT / os.getenv("GRAPH_ROOT", "myproj")).resolve()
 OUTPUT_DIR: Path = GRAPH_ROOT / "output"
 INPUT_DIR: Path = GRAPH_ROOT / "input"
@@ -21,8 +24,8 @@ ROUTER_MIN_CONF: float = float(os.getenv("ROUTER_MIN_CONF", "0.5"))
 COMMUNITY_LEVEL: int = int(os.getenv("COMMUNITY_LEVEL", "2"))
 OFFLINE: bool = os.getenv("OFFLINE") == "1"
 
-if GRAPHRAG_API_KEY:
-    os.environ["GRAPHRAG_API_KEY"] = GRAPHRAG_API_KEY
+if GEMINI_API_KEY:
+    os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),

@@ -1,4 +1,4 @@
-"""Single gateway for all LLM calls: cached in SQLite, retried with backoff."""
+"""Single gateway for all LLM calls (Gemini via its OpenAI-compatible endpoint): cached, retried."""
 from __future__ import annotations
 
 import hashlib
@@ -10,14 +10,15 @@ import threading
 import time
 from typing import Any
 
-from backend.config import CACHE_DB, GRAPHRAG_API_KEY, LLM_BASE_URL
+from backend.config import CACHE_DB, GEMINI_API_KEY, LLM_BASE_URL
 
 logger = logging.getLogger(__name__)
 
 COUNTERS: dict[str, int] = {"calls": 0, "cache_hits": 0, "tokens": 0}
 _LOCK = threading.Lock()
 _CLIENT: Any = None
-MAX_RETRIES = 5
+MAX_RETRIES = 6
+FIRST_RETRY_DELAY_S = 2.0
 
 
 def _db() -> sqlite3.Connection:
@@ -28,12 +29,14 @@ def _db() -> sqlite3.Connection:
 
 
 def _client() -> Any:
-    """Create the OpenAI client lazily so imports work without a key."""
+    """Create the Gemini (OpenAI-compatible) client lazily so imports work without a key."""
     global _CLIENT
     if _CLIENT is None:
         from openai import OpenAI
 
-        _CLIENT = OpenAI(api_key=GRAPHRAG_API_KEY, base_url=LLM_BASE_URL)
+        if not GEMINI_API_KEY:
+            raise RuntimeError("GEMINI_API_KEY is not set in .env")
+        _CLIENT = OpenAI(api_key=GEMINI_API_KEY, base_url=LLM_BASE_URL, max_retries=0)
     return _CLIENT
 
 
@@ -72,7 +75,7 @@ def chat_text(model: str, system: str, user: str) -> str:
             COUNTERS["cache_hits"] += 1
         return cached
 
-    delay = 1.0
+    delay = FIRST_RETRY_DELAY_S
     for attempt in range(MAX_RETRIES):
         try:
             with _LOCK:

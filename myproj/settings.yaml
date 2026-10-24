@@ -4,25 +4,35 @@
 ### LLM settings ###
 ## There are a number of settings to tune the threading and token limits for LLM calls - check the docs.
 
+concurrent_requests: 2 # free-tier Gemini: keep parallel LLM calls low
+
 completion_models:
   default_completion_model:
-    model_provider: openai
-    model: gpt-4o-mini
-    auth_method: api_key # or azure_managed_identity
-    api_key: ${GRAPHRAG_API_KEY} # set this in the generated .env file, or remove if managed identity
+    model_provider: gemini
+    model: gemini-2.5-flash-lite
+    auth_method: api_key
+    api_key: ${GEMINI_API_KEY}
     retry:
       type: exponential_backoff
-      max_retries: 5
+      max_retries: 6
+    rate_limit:
+      type: sliding_window
+      period_in_seconds: 60
+      requests_per_period: 10
 
 embedding_models:
   default_embedding_model:
-    model_provider: openai
-    model: text-embedding-3-small
+    model_provider: gemini
+    model: gemini-embedding-001
     auth_method: api_key
-    api_key: ${GRAPHRAG_API_KEY}
+    api_key: ${GEMINI_API_KEY}
     retry:
       type: exponential_backoff
-      max_retries: 5
+      max_retries: 6
+    rate_limit:
+      type: sliding_window
+      period_in_seconds: 60
+      requests_per_period: 30
 
 ### Document processing settings ###
 
@@ -61,6 +71,7 @@ cache:
 vector_store:
   type: lancedb
   db_uri: output\lancedb
+  vector_size: 3072 # gemini-embedding-001 output dimension
 
 ### Workflow settings ###
 

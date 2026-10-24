@@ -1,3 +1,5 @@
+# LLM: Gemini free tier. Set GEMINI_API_KEY in .env (from aistudio.google.com/apikey).
+# No extra SDK needed: graphrag uses litellm's gemini provider, backend/llm.py uses Gemini's OpenAI-compatible endpoint.
 graphrag==3.3.0
 streamlit==1.66.1
 pyvis==0.3.2
