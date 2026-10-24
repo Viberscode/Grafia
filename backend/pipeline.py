@@ -182,6 +182,9 @@ def _run_graph(question: str, route: str, route_info: dict, timings: dict[str, i
     timings["total"] = int((time.perf_counter() - t_start) * 1000)
     retrieval = {k: v for k, v in r.info.items() if k != "timings_ms"}
     retrieval["contexts"] = [{k: c.get(k) for k in ("chunk_id", "label", "doc", "why")} for c in r.contexts]
+    cited = {e.chunk_id for c in claims for e in c.evidence}
+    retrieval["cited_documents"] = list(dict.fromkeys(
+        c["doc"] for c in r.contexts if c["chunk_id"] in cited and c.get("label") == "fact" and c.get("doc")))
     common = dict(route=route, highlights=highlights, sources=sources, timings_ms=timings, router=route_info,
                   stats=stats, trace=r.trace, retrieval=retrieval)
     if is_abstain:

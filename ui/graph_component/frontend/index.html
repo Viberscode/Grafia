@@ -24,6 +24,7 @@
       <output id="depthVal" for="depth">off</output>
     </label>
     <span class="spacer"></span>
+    <button id="docs" type="button" aria-pressed="true" aria-label="Show documents" title="Show document nodes">&#9635; Docs</button>
     <button id="replay" type="button" aria-label="Replay evidence path" title="Replay evidence path">&#9654; Replay</button>
     <button id="fit" type="button" aria-label="Fit graph to view (F)" title="Fit (F)">&#10530; Fit</button>
     <button id="reset" type="button" aria-label="Reset view" title="Reset view">&#8634; Reset</button>
@@ -43,8 +44,11 @@
       <div class="legend-key">
         <span><i class="dot hl"></i> evidence</span>
         <span><i class="dot dim"></i> context</span>
+        <span><i class="sq"></i> document</span>
+        <span><i class="dash"></i> cites</span>
       </div>
     </aside>
+    <div id="caption" class="caption" role="status" aria-live="polite" hidden></div>
     <aside id="drawer" role="dialog" aria-label="Details" hidden>
       <button id="drawerClose" type="button" class="icon" aria-label="Close details (Esc)">&times;</button>
       <div id="drawerBody"></div>

@@ -19,7 +19,9 @@
     view: "answer", depth: 0, selected: null, hiddenComms: new Set(), labels: "zoom",
     physics: false, replay: null, focusNonce: null, flash: null, height: 680, theme: null,
     visible: new Set(), pulseTimer: null, physicsTimer: null, lastExport: null,
+    showDocs: false, hlDocs: new Set(), halo: [], trace: [], stepOf: {}, replayTimer: null,
   };
+  const isDoc = (n) => n && n.kind === "document";
 
   // ---------- helpers ----------
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => (
@@ -69,7 +71,24 @@
       `<div>${esc(desc)}${(n.description || "").length > 120 ? "&hellip;" : ""}</div>`;
     return el;
   }
+  function docStyle(n) {
+    const c = colors();
+    const isH = S.hlDocs.has(n.id);
+    const dim = (S.hl.size > 0 || S.hlDocs.size > 0) && !isH;
+    const el = document.createElement("div");
+    el.className = "tip";
+    el.innerHTML = `<b>${esc(n.label)}</b><small>document &middot; ${esc(n.degree)} entities</small>`;
+    return {
+      id: n.id, label: n.label, shape: "square", size: isH ? 13 : 10, value: undefined, title: el,
+      color: { background: rgba("#9aa4b2", dim ? 0.3 : 1), border: isH ? c.hl : rgba("#6b7280", dim ? 0.3 : 1),
+               highlight: { background: "#9aa4b2", border: c.fg }, hover: { background: "#9aa4b2", border: c.fg } },
+      borderWidth: isH ? 3 : 1, borderWidthSelected: 3,
+      font: { color: rgba(c.fg.startsWith("#") ? c.fg : "#1f2430", dim ? 0.35 : 0.9), size: 11,
+              strokeWidth: 3, strokeColor: rgba(c.bg.startsWith("#") ? c.bg : "#ffffff", 0.85) },
+    };
+  }
   function nodeStyle(n) {
+    if (isDoc(n)) return docStyle(n);
     const c = colors();
     const base = commColor(n.community);
     const isH = S.hl.has(n.id);
@@ -86,12 +105,18 @@
     };
   }
   function edgeIsHl(e) {
+    if (e.kind === "cites") return S.hlDocs.has(e.source) && S.hl.has(e.target);
     if (S.hlEdges.size) return S.hlEdges.has(e.id);
     return S.hl.has(e.source) && S.hl.has(e.target);
   }
   function edgeStyle(e) {
     const c = colors();
     const isH = edgeIsHl(e);
+    if (e.kind === "cites") {
+      return { id: e.id, from: e.source, to: e.target, dashes: [4, 4], width: isH ? 2 : 1, title: e.description,
+               color: { color: isH ? rgba(c.hl.startsWith("#") ? c.hl : "#ff2d2d", 0.7) : rgba(c.edge, 0.35),
+                        highlight: c.fg, hover: c.fg } };
+    }
     const dim = S.hl.size > 0 && !isH;
     const el = document.createElement("div");
     el.className = "tip";
@@ -125,6 +150,14 @@
     S.hl = new Set((h.nodes || []).filter((id) => S.byId[id]));
     S.hlEdges = new Set((h.edges || []).map(String).filter((id) => S.edgeById[id]));
     S.pinned = new Set(((payload.options || {}).pinned || []).filter((id) => S.byId[id]));
+    S.hlDocs = new Set((h.documents || []).filter((id) => S.byId[id]));
+    S.halo = (h.halo || []).map(String);
+    S.trace = (payload.trace || []).map((s) => Object.assign({}, s, { nodes: (s.nodes || []).filter((id) => S.byId[id]) }));
+    S.stepOf = {};
+    S.trace.forEach((s) => {
+      const badge = s.kind === "community" ? s.nodes.slice(0, 1) : s.nodes;
+      badge.forEach((id) => { if (!(id in S.stepOf)) S.stepOf[id] = s.n; });
+    });
   }
 
   function build(payload) {
@@ -192,11 +225,16 @@
       vis = neighborhood(anchor, S.depth);
     } else if (S.view === "answer" && (S.hl.size || S.pinned.size)) {
       vis = new Set([...S.hl, ...S.pinned]);
-      S.hl.forEach((n) => (S.adj[n] || []).forEach((m) => vis.add(m)));
+      S.hl.forEach((n) => (S.adj[n] || []).forEach((m) => { if (!isDoc(S.byId[m])) vis.add(m); }));
+      S.hlDocs.forEach((d) => vis.add(d));
     } else {
       vis = new Set(Object.keys(S.byId));
     }
-    return new Set([...vis].filter((id) => !S.hiddenComms.has(S.byId[id].community) || id === S.selected));
+    return new Set([...vis].filter((id) => {
+      const n = S.byId[id];
+      if (isDoc(n)) return S.showDocs || id === S.selected;
+      return !S.hiddenComms.has(n.community) || id === S.selected;
+    }));
   }
   function applyVisibility(fit) {
     if (!S.nodes) return;
@@ -217,7 +255,8 @@
     let changed = false;
     ids.forEach((id) => {
       const n = S.byId[id];
-      if (n && S.hiddenComms.has(n.community)) { S.hiddenComms.delete(n.community); changed = true; }
+      if (isDoc(n) && !S.showDocs) { S.showDocs = true; syncDocsButton(); changed = true; }
+      if (n && !isDoc(n) && S.hiddenComms.has(n.community)) { S.hiddenComms.delete(n.community); changed = true; }
     });
     if (ids.some((id) => !computeVisible().has(id))) { S.view = "full"; S.depth = 0; $("depth").value = "0"; changed = true; }
     if (changed) { renderLegend(); applyVisibility(false); }
@@ -229,10 +268,58 @@
     const r = node && node.shape && node.shape.radius;
     return r || (node && node.options && node.options.size) || 10;
   }
+  function drawBadge(ctx, id, label) {
+    const p = S.network.getPositions([id])[id];
+    if (!p) return;
+    const r = nodeRadius(id);
+    ctx.fillStyle = "#111827";
+    ctx.beginPath(); ctx.arc(p.x + r, p.y - r, 10, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = "#ffffff"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(String(label), p.x + r, p.y - r);
+  }
+  function haloNodes(c) {
+    const step = S.trace.find((s) => s.kind === "community" && s.ids.includes(c));
+    const ids = step ? step.nodes : S.payload.nodes.filter((n) => n.community === c && S.hl.has(n.id)).map((n) => n.id);
+    return ids.filter((id) => S.visible.has(id));
+  }
+  function beforeDrawing(ctx) {
+    S.halo.forEach((c) => {
+      const ids = haloNodes(c);
+      if (!ids.length) return;
+      const pos = S.network.getPositions(ids);
+      const pts = ids.map((id) => pos[id]).filter(Boolean);
+      const cx = pts.reduce((a, p) => a + p.x, 0) / pts.length;
+      const cy = pts.reduce((a, p) => a + p.y, 0) / pts.length;
+      const r = Math.max(...pts.map((p) => Math.hypot(p.x - cx, p.y - cy))) + 45;
+      const col = commColor(c) === "#8f99a8" ? (colors().hl || "#ff2d2d") : commColor(c);
+      ctx.fillStyle = rgba(col.startsWith("#") ? col : "#ff2d2d", 0.08);
+      ctx.strokeStyle = rgba(col.startsWith("#") ? col : "#ff2d2d", 0.45);
+      ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+  function drawTrace(ctx, steps) {
+    const c = colors();
+    steps.filter((s) => s.kind === "hop" && s.nodes.length > 1).forEach((s) => {
+      const pos = S.network.getPositions(s.nodes);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = rgba(c.hl.startsWith("#") ? c.hl : "#ff2d2d", 0.55);
+      ctx.beginPath();
+      s.nodes.forEach((id, i) => { const p = pos[id]; if (p) { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); } });
+      ctx.stroke();
+    });
+    const seen = new Set();
+    steps.forEach((s) => (s.kind === "community" ? s.nodes.slice(0, 1) : s.nodes).forEach((id) => {
+      if (!seen.has(id) && S.visible.has(id)) { seen.add(id); drawBadge(ctx, id, s.n); }
+    }));
+  }
   function afterDrawing(ctx) {
     const c = colors();
     const now = performance.now();
-    if (S.replay) {
+    if (S.replay && S.replay.trace) {
+      drawTrace(ctx, S.replay.trace.slice(0, S.replay.step));
+    } else if (S.replay) {
       const reached = S.replay.order.slice(0, S.replay.step);
       const pos = S.network.getPositions(reached);
       ctx.lineWidth = 5;
@@ -249,7 +336,8 @@
         ctx.fillStyle = "#ffffff"; ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText(String(i + 1), p.x + r, p.y - r);
       });
-    } else if (S.hl.size) {
+    } else if (S.hl.size || S.trace.length) {
+      if (S.trace.length) drawTrace(ctx, S.trace);
       const t = (Math.sin(now / 320) + 1) / 2;
       const ids = [...S.hl].filter((id) => S.visible.has(id));
       const pos = S.network.getPositions(ids);
@@ -273,7 +361,7 @@
   function startPulse() {
     clearInterval(S.pulseTimer);
     S.pulseTimer = setInterval(() => {
-      const active = S.hl.size || S.replay || (S.flash && performance.now() < S.flash.until);
+      const active = S.hl.size || S.replay || S.halo.length || (S.flash && performance.now() < S.flash.until);
       if (active && S.network && !document.hidden) S.network.redraw();
     }, 70);
   }
@@ -288,11 +376,35 @@
     if (!sources || !sources.length) return '<p class="muted">No source excerpt available.</p>';
     return sources.map((s) => `<div class="src"><b>${esc(s.doc)}</b>&ldquo;${esc(s.excerpt)}&rdquo;</div>`).join("");
   }
+  function openDocument(n, fromUser) {
+    const ents = [...new Set(S.adj[n.id] || [])].sort((a, b) => (S.byId[b].degree || 0) - (S.byId[a].degree || 0));
+    const cited = ents.filter((m) => S.hl.has(m));
+    const steps = S.trace.filter((s) => s.nodes.includes(n.id)).map((s) => s.n);
+    $("drawerBody").innerHTML =
+      `<h3>${esc(n.label)}</h3>
+       <div class="chips">
+         <span class="chip">&#9635; document</span>
+         ${S.hlDocs.has(n.id) ? '<span class="chip hl">&#9679; cited by this answer</span>' : ""}
+         ${steps.length ? `<span class="chip">trace step ${steps.join(", ")}</span>` : ""}
+         <span class="chip">${ents.length} entities</span>
+       </div>
+       <h4>Excerpts</h4>${sourcesHtml(n.sources)}
+       ${cited.length ? `<h4>Evidence entities (${cited.length})</h4>` : ""}
+       <div class="nbrs">${cited.map((m) => `<button type="button" data-nbr="${esc(m)}">${esc(m)}</button>`).join("")}</div>
+       <h4>Mentions (${ents.length})</h4>
+       <div class="nbrs">${ents.slice(0, 30).map((m) => `<button type="button" data-nbr="${esc(m)}" aria-label="Open ${esc(m)}"><i class="dot" style="background:${esc(commColor(S.byId[m].community))}"></i>${esc(m)}</button>`).join("")}</div>
+       <div class="actions"><button type="button" class="primary" id="askBtn">&#128172; Ask what it says</button></div>`;
+    $("drawer").hidden = false;
+    $("drawerBody").querySelectorAll("[data-nbr]").forEach((b) => b.addEventListener("click", () => jumpTo(b.dataset.nbr, true)));
+    $("askBtn").addEventListener("click", () => emit({ type: "ask", question: `What does ${n.label} say?` }));
+    if (fromUser) emit({ type: "doc_click", id: n.id });
+  }
   function openNode(id, fromUser) {
     const n = S.byId[id];
     if (!n) return;
     S.selected = id;
     S.network.selectNodes([id]);
+    if (isDoc(n)) { openDocument(n, fromUser); return; }
     const nbrs = [...new Set(S.adj[id] || [])].sort((a, b) => (S.byId[b].degree || 0) - (S.byId[a].degree || 0)).slice(0, 30);
     $("drawerBody").innerHTML =
       `<h3>${esc(n.label)}</h3>
@@ -362,7 +474,40 @@
   }
 
   // ---------- replay ----------
+  const KIND = { seed: "Seed entities", hop: "Graph hop", community: "Community theme",
+                 chunk: "Evidence chunks", document: "Source documents" };
+  function showCaption(s) {
+    const el = $("caption");
+    el.innerHTML = `<b>Step ${s.n} of ${S.trace.length}</b>${esc(KIND[s.kind] || s.kind)}: ${esc(s.note || s.ids.join(", "))}`;
+    el.hidden = false;
+  }
+  function replayTrace() {
+    clearInterval(S.replayTimer);
+    ensureVisible([...new Set(S.trace.flatMap((s) => s.nodes))]);
+    S.replay = { trace: S.trace, step: 0 };
+    $("replay").disabled = true;
+    const advance = () => {
+      S.replay.step += 1;
+      const s = S.trace[S.replay.step - 1];
+      if (s) {
+        showCaption(s);
+        const reached = [...new Set(S.trace.slice(0, S.replay.step).flatMap((x) => x.nodes))].filter((id) => S.visible.has(id));
+        S.network.selectNodes(s.nodes.filter((id) => S.visible.has(id)));
+        if (reached.length) S.network.fit({ nodes: reached, animation: { duration: 500, easingFunction: "easeInOutQuad" } });
+      }
+      if (S.replay.step >= S.trace.length) {
+        clearInterval(S.replayTimer);
+        setTimeout(() => {
+          S.replay = null; $("replay").disabled = false; $("caption").hidden = true;
+          S.network.unselectAll(); S.network.redraw();
+        }, 2600);
+      }
+    };
+    advance();
+    S.replayTimer = setInterval(advance, 1700);
+  }
   function replay() {
+    if (S.trace.length) { replayTrace(); return; }
     const order = (S.payload.highlight.order || []).filter((id) => S.byId[id]);
     if (!order.length) { status("No evidence path to replay"); return; }
     ensureVisible(order);
@@ -456,7 +601,16 @@
       });
     }
   }
+  function syncDocsButton() {
+    $("docs").setAttribute("aria-pressed", String(S.showDocs));
+  }
   function wireToolbar() {
+    $("docs").addEventListener("click", () => {
+      S.showDocs = !S.showDocs;
+      syncDocsButton();
+      applyVisibility(false);
+      status(S.showDocs ? "Documents shown" : "Documents hidden");
+    });
     $("viewAnswer").addEventListener("click", () => { S.view = "answer"; applyVisibility(true); });
     $("viewFull").addEventListener("click", () => { S.view = "full"; applyVisibility(true); });
     $("depth").addEventListener("input", (e) => {
@@ -516,6 +670,7 @@
       else if (p.edges.length) openEdge(p.edges[0], true);
       else if (!$("drawer").hidden) closeDrawer();
     });
+    S.network.on("beforeDrawing", beforeDrawing);
     S.network.on("afterDrawing", afterDrawing);
   }
 
@@ -550,6 +705,9 @@
       const showFull = !!(payload.options || {}).show_full;
       if (firstBuild || showFull !== S.lastShowFull) S.view = showFull ? "full" : "answer";
       S.lastShowFull = showFull;
+      if ((payload.highlight.documents || []).length) S.showDocs = true;
+      syncDocsButton();
+      clearInterval(S.replayTimer); S.replay = null; $("caption").hidden = true; $("replay").disabled = false;
       build(payload);
       if (!firstBuild) setTimeout(fitVisible, 350);
     }
@@ -568,5 +726,6 @@
   });
   wireToolbar();
   Streamlit.ready();
-  window.TG = { S: S, openNode: openNode, openEdge: openEdge, applyFocus: applyFocus, replay: replay, exportPng: exportPng, jumpTo: jumpTo };
+  window.TG = { S: S, openNode: openNode, openEdge: openEdge, applyFocus: applyFocus, replay: replay, exportPng: exportPng,
+                jumpTo: jumpTo, toggleDocs: () => $("docs").click() };
 })();

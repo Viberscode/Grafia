@@ -45,13 +45,23 @@ def graph_tab(data: DataSource) -> None:
     """Interactive graph for the latest answer."""
     from ui.graph_component import graph_view
 
+    import json
+
     resp = state.last_response()
     h = resp.highlights if resp else None
+    trace = json.dumps([s.model_dump() for s in resp.trace]) if resp else "[]"
+    docs = resp.retrieval.get("cited_documents") if resp else None
+    cited = None if docs is None else tuple(docs)
     p = payload(data, data.is_mock, tuple(h.nodes) if h else (), tuple(h.edges) if h else (),
-                tuple(h.communities) if h else (), state.show_full(), tuple(state.expanded()))
+                tuple(h.communities) if h else (), state.show_full(), tuple(state.expanded()), trace, cited)
     n_hl = len(p["highlight"]["nodes"])
-    st.caption(f"{len(p['nodes'])} entities · {len(p['edges'])} relationships shown"
-               + (f" · :red[{n_hl} on the evidence path]" if n_hl else " · ask a question to highlight evidence"))
+    n_ent = sum(n.get("kind") != "document" for n in p["nodes"])
+    n_rel = sum(e.get("kind") != "cites" for e in p["edges"])
+    n_doc = len(p["highlight"].get("documents", []))
+    st.caption(f"{n_ent} entities · {n_rel} relationships shown"
+               + (f" · :red[{n_hl} on the evidence path]" if n_hl else " · ask a question to highlight evidence")
+               + (f" · {n_doc} cited documents" if n_doc else "")
+               + (f" · {len(p['trace'])}-step trace (press Replay)" if p.get("trace") else ""))
     graph_view(p, state.focus().as_dict(), key=state.GRAPH_KEY, height=640)
 
 

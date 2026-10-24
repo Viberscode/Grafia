@@ -104,8 +104,29 @@ def header(data: DataSource) -> None:
     s = data.stats()
     status_cls = "tg-status-demo" if data.is_mock else "tg-status-ok"
     chips = "".join(f"<span class='tg-chip' aria-label='{v} {k}'><b>{v}</b> {k}</span>" for k, v in s.items())
-    st.markdown(f"<div class='tg-chips'>{chips}<span class='tg-chip {status_cls}'>&#9679; {html.escape(data.status)}</span></div>",
-                unsafe_allow_html=True)
+    stores = "" if data.is_mock else "".join(
+        f"<span class='tg-chip {'tg-status-ok' if c['ok'] else 'tg-status-demo'}' title='{html.escape(c['detail'])}'>"
+        f"&#9679; <b>{html.escape(c['name'])}</b> {html.escape(_store_counts(c))}</span>" for c in store_health())
+    st.markdown(f"<div class='tg-chips'>{chips}<span class='tg-chip {status_cls}'>&#9679; {html.escape(data.status)}</span>"
+                f"{stores}</div>", unsafe_allow_html=True)
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def store_health() -> list[dict]:
+    """Graph and vector store chips (cached for 30 s)."""
+    from backend.stores import health
+
+    return health.status()
+
+
+def _store_counts(chip: dict) -> str:
+    """Short count text for a store chip."""
+    c = chip.get("counts") or {}
+    if not chip["ok"]:
+        return "offline" if not c else "fallback"
+    if "Entity" in c:
+        return f"{c.get('Entity', 0)} nodes · {c.get('REL', 0)} rels"
+    return f"{c.get('chunks', 0)} chunks · {c.get('reports', 0)} reports"
 
 
 def examples(data: DataSource) -> dict[str, list[str]]:
@@ -116,7 +137,9 @@ def examples(data: DataSource) -> dict[str, list[str]]:
     thematic = ["What are the main themes in these documents?"] + [f"What are the key themes around {t}?" for t in titles[:2]]
     factual = [f"What is {top[0].title()}?", f"What role does {top[1].title()} play?",
                f"How is {top[2].title()} connected to {top[3].title()}?"] if len(top) >= 4 else []
-    return {"Thematic (global)": thematic, "Specific (local)": factual, "Out of scope (abstain)": OUT_OF_SCOPE_EXAMPLES}
+    mixed = [f"What are the main themes around {titles[0]}, and who is involved?"] if titles else []
+    return {"Thematic (global)": thematic, "Specific (local)": factual, "Themes + facts (hybrid)": mixed,
+            "Out of scope (abstain)": OUT_OF_SCOPE_EXAMPLES}
 
 
 def empty_state(data: DataSource) -> None:
@@ -129,10 +152,12 @@ def empty_state(data: DataSource) -> None:
             st.button(q, key=f"ex_{label}_{i}", on_click=state.ask, args=(q,), icon=":material/arrow_forward:")
     with st.expander("How it works", icon=":material/info:"):
         st.markdown(
-            "1. **Route**: an LLM router picks *global* (themes), *local* (entities) or *abstain*.\n"
-            "2. **Search**: GraphRAG queries community reports or the entity graph.\n"
+            "1. **Route**: an LLM router picks *global* (themes), *local* (facts), *hybrid* (both) or *abstain*.\n"
+            "2. **Retrieve**: community reports from ChromaDB for themes; for facts, seed entities, a 2-hop "
+            "expansion in the graph database and personalised PageRank, then the chunks behind those edges.\n"
             "3. **Verify**: every claim must cite a quote found verbatim in the retrieved text.\n"
-            "4. **Highlight**: cited entities and the path between them light up in red on the graph.")
+            "4. **Trace**: seed → hop → chunk → document steps are numbered on the graph; only entities "
+            "named in verified quotes stay red.")
 
 
 # ---------- message card ----------
@@ -144,12 +169,27 @@ def _stream_words(text: str, delay: float = 0.012) -> Iterator[str]:
 
 
 def route_badge(resp: Response) -> None:
-    """Route badge with icon, text and a reason/confidence tooltip."""
+    """Route badge with icon, text and a reason/confidence tooltip; hybrid adds a Theme + Facts split."""
     meta = ROUTES.get(resp.route, ROUTES["basic"])
     conf = resp.router.get("confidence")
     conf_txt = f" (confidence {conf:.2f})" if isinstance(conf, (int, float)) else ""
     reason = str(resp.router.get("reason") or "No router details.")
-    st.badge(meta["label"], icon=meta["icon"], color=meta["color"], help=f"{reason}{conf_txt}")
+    split = resp.retrieval.get("split") if isinstance(resp.retrieval, dict) else None
+    with st.container(horizontal=True, gap="small"):
+        st.badge(meta["label"], icon=meta["icon"], color=meta["color"], help=f"{reason}{conf_txt}")
+        if resp.route == "hybrid" and isinstance(split, dict):
+            st.badge(f"Theme {split.get('theme', 0)} + Facts {split.get('fact', 0)}", icon=":material/call_split:",
+                     color="green", help="Contexts fused with reciprocal rank fusion: community reports (theme) "
+                                         "and graph-retrieved chunks (fact).")
+        if resp.trace:
+            st.badge(f"{len(resp.trace)}-step trace", icon=":material/route:", color="gray",
+                     help=" → ".join(f"{s.kind}" for s in resp.trace))
+
+
+def claim_origin(claim: Claim) -> str:
+    """'theme', 'fact' or 'theme + fact' from where the claim's quotes come from."""
+    kinds = {"theme" if e.chunk_id.startswith("report_") else "fact" for e in claim.evidence}
+    return " + ".join(sorted(kinds)) or "fact"
 
 
 def _doc_for(data: DataSource, resp: Response, chunk_id: str) -> str:
@@ -163,7 +203,9 @@ def _doc_for(data: DataSource, resp: Response, chunk_id: str) -> str:
 def claim_card(data: DataSource, resp: Response, claim: Claim, key: str) -> None:
     """Verified claim with expandable quotes and Show-in-graph buttons."""
     with st.container(border=True, key=f"tg_claim_{key}"):
-        st.markdown(f":green[:material/check_circle:] {claim.text}")
+        origin = claim_origin(claim)
+        color = {"theme": "violet", "fact": "blue"}.get(origin, "green")
+        st.markdown(f":green[:material/check_circle:] {claim.text} :{color}-badge[{origin}]")
         with st.expander(f"{len(claim.evidence)} verified quote{'s' if len(claim.evidence) != 1 else ''}"):
             for j, ev in enumerate(claim.evidence):
                 st.markdown(f"<div class='tg-quote'>\u201c{html.escape(ev.quote)}\u201d</div>", unsafe_allow_html=True)
@@ -292,7 +334,8 @@ def input_row() -> None:
         with st.popover(state.MODE_LABELS.get(state.mode(), "Auto"), icon=":material/tune:", help="Search mode"):
             st.segmented_control("Search mode", list(state.MODE_LABELS), key=state.MODE_KEY, required=True,
                                  format_func=state.MODE_LABELS.get)
-            st.caption("Auto lets the router choose. Basic is the plain vector-search baseline.")
+            st.caption("Auto lets the router choose. The GraphRAG modes run Microsoft GraphRAG's own searches "
+                       "as baselines.")
     st.chat_input("Ask about the corpus...", key="tg_input", on_submit=_submit)
 
 

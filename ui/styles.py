@@ -6,7 +6,10 @@ import streamlit as st
 ROUTES = {
     "global": {"icon": ":material/hub:", "color": "violet", "label": "Global (themes)"},
     "local": {"icon": ":material/my_location:", "color": "blue", "label": "Local (entities)"},
-    "basic": {"icon": ":material/search:", "color": "gray", "label": "Basic (vector)"},
+    "hybrid": {"icon": ":material/join:", "color": "green", "label": "Hybrid (themes + facts)"},
+    "basic": {"icon": ":material/search:", "color": "gray", "label": "GraphRAG basic (baseline)"},
+    "graphrag_local": {"icon": ":material/my_location:", "color": "gray", "label": "GraphRAG local (baseline)"},
+    "graphrag_global": {"icon": ":material/hub:", "color": "gray", "label": "GraphRAG global (baseline)"},
     "abstain": {"icon": ":material/block:", "color": "orange", "label": "Abstained"},
 }
 
@@ -47,16 +50,19 @@ CSS = """
 GUIDE = """
 **Ask** a question in the chat. The router picks a strategy:
 
-- :violet-badge[:material/hub: Global]: themes across the whole corpus (community reports)
-- :blue-badge[:material/my_location: Local]: specific entities and how they connect
+- :violet-badge[:material/hub: Global]: themes across the whole corpus (community reports in ChromaDB)
+- :blue-badge[:material/my_location: Local]: seed entities, 2-hop graph expansion and personalised PageRank
+- :green-badge[:material/join: Hybrid]: both, fused with reciprocal rank fusion (Theme + Facts)
 - :orange-badge[:material/block: Abstain]: out of scope, with the closest theme instead
 
-Every claim is backed by a **verified verbatim quote**. Click **Show in graph** to zoom to its evidence.
+Every claim is backed by a **verified verbatim quote**, tagged *theme* or *fact* by where it came from.
+Click **Show in graph** to zoom to its evidence.
 
-**Graph**: red = evidence, faded = context. Click a node for details, *Ask about this* or *Expand neighbours*.
-Press `/` to search, `F` to fit, `Esc` to clear. *Replay* walks the evidence path step by step.
+**Graph**: red = evidence, faded = context, squares = documents (dashed = cites). Numbers are the
+retrieval trace; *Replay* walks it step by step with a caption. Click a node or document for details.
+Press `/` to search, `F` to fit, `Esc` to clear.
 
-**Tabs**: Themes (community cards), Sources (cited chunks), Compare (basic vs auto), Results (benchmark).
+**Tabs**: Themes (community cards), Sources (cited chunks), Compare (ThemeGraph vs GraphRAG basic), Results (benchmark).
 """
 
 

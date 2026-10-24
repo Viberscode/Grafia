@@ -207,6 +207,50 @@ def evidence_order(graph: nx.Graph, nodes: list[str]) -> list[str]:
     return path + [n for n in present if n not in path]
 
 
+DOC_PREFIX = "doc:"
+
+
+def doc_node_id(title: str) -> str:
+    """Graph id of a document node."""
+    return f"{DOC_PREFIX}{title}"
+
+
+def document_layer(graph: nx.Graph, entity_ids: list[str], text_units: dict[str, tuple[str, str]]) -> tuple[list, list]:
+    """Document nodes and dashed 'cites' edges to the entities whose text units come from them."""
+    docs: dict[str, dict] = {}
+    edges = []
+    for n in entity_ids:
+        for doc in sorted({text_units[u][0] for u in graph.nodes[n].get("text_unit_ids", []) if u in text_units}):
+            d = docs.setdefault(doc, {"id": doc_node_id(doc), "label": doc, "kind": "document", "type": "document",
+                                      "community": "doc", "degree": 0, "description": "", "sources": []})
+            d["degree"] += 1
+            edges.append({"id": f"cites:{doc}:{n}", "source": d["id"], "target": n, "kind": "cites",
+                          "label": "", "description": f"{doc} mentions {n}", "sources": []})
+    for uid, (doc, text) in text_units.items():
+        if doc in docs and len(docs[doc]["sources"]) < 3:
+            docs[doc]["sources"].append({"doc": doc, "excerpt": text.strip()[:240], "chunk_id": uid})
+    return list(docs.values()), edges
+
+
+def trace_payload(trace: list[dict], graph: nx.Graph, text_units: dict[str, tuple[str, str]],
+                  titles: dict[str, str], members: dict[str, list[str]]) -> list[dict]:
+    """Trace steps with the graph node ids each step lights up, for numbered badges and replay."""
+    steps = []
+    for i, step in enumerate(trace or []):
+        kind, ids = step.get("kind"), [str(x) for x in step.get("ids", [])]
+        if kind in ("seed", "hop"):
+            nodes = [x for x in ids if x in graph]
+        elif kind == "community":
+            nodes = [n for c in ids for n in members.get(c, [])]
+        elif kind == "chunk":
+            nodes = list(dict.fromkeys(doc_node_id(text_units[c][0]) for c in ids if c in text_units))
+        else:
+            nodes = [doc_node_id(x) for x in ids]
+        label = {"community": ", ".join(titles.get(c, c) for c in ids)}.get(kind, "")
+        steps.append({"n": i + 1, "kind": kind, "ids": ids, "note": step.get("note") or label, "nodes": nodes})
+    return steps
+
+
 def to_payload(
     graph: nx.Graph,
     highlights: dict | Any | None,
@@ -215,8 +259,13 @@ def to_payload(
     text_units: dict[str, tuple[str, str]] | None = None,
     titles: dict[str, str] | None = None,
     expanded: list[str] | None = None,
+    trace: list[dict] | None = None,
+    cited_documents: list[str] | None = None,
 ) -> dict:
-    """Serialise the graph for the interactive component: nodes, edges, highlight, communities, options."""
+    """Serialise the graph for the interactive component: nodes, edges, documents, trace, highlight, options.
+
+    Highlighted documents are those whose chunks verified quotes cite, else every document in the trace.
+    """
     if highlights is not None and hasattr(highlights, "model_dump"):
         highlights = highlights.model_dump()
     highlights = highlights or {}
@@ -246,11 +295,20 @@ def to_payload(
         sizes[n["community"]] = sizes.get(n["community"], 0) + 1
     communities = [{"id": c, "title": titles.get(c, f"Community {c}"), "color": community_color(c), "size": s}
                    for c, s in sorted(sizes.items(), key=lambda kv: -kv[1])]
+    doc_nodes, doc_edges = document_layer(graph, list(sub.nodes), text_units)
+    halo = [str(c) for c in highlights.get("communities", [])]
+    members = {c: [n for n in (h_nodes or sub.nodes) if c in map(str, graph.nodes[n].get("communities", []))
+                   or str(graph.nodes[n].get("community")) == c] for c in halo}
+    steps = trace_payload(trace or [], graph, text_units, titles, members)
+    cited_docs = [doc_node_id(d) for d in cited_documents] if cited_documents is not None else [
+        n for s in steps if s["kind"] in ("chunk", "document") for n in s["nodes"]]
     return {
-        "nodes": nodes,
-        "edges": edges,
+        "nodes": nodes + doc_nodes,
+        "edges": edges + doc_edges,
         "highlight": {"nodes": h_nodes, "edges": list(highlights.get("edges", [])),
-                      "order": evidence_order(graph, h_nodes)},
+                      "order": evidence_order(graph, h_nodes), "documents": list(dict.fromkeys(cited_docs)),
+                      "halo": [c for c in halo if members.get(c)]},
+        "trace": steps,
         "communities": communities,
         "options": {"show_full": bool(show_full), "depth": 1, "pinned": sorted(pinned - set(h_nodes))},
     }

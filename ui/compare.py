@@ -64,7 +64,7 @@ def _side(data: DataSource, title: str, resp: Response, other: Response) -> None
 
 
 def _run_basic(data: DataSource, question: str) -> None:
-    with st.spinner("Running basic vector search..."):
+    with st.spinner("Running GraphRAG basic search..."):
         state.compare_results()[question] = data.run(question, "basic")
 
 
@@ -79,21 +79,23 @@ def render(data: DataSource) -> None:
     """Basic search vs the routed answer for the latest question."""
     turn = _last_turn()
     if turn is None:
-        st.info("Ask a question first, then compare the routed GraphRAG answer with the basic vector-search baseline.")
+        st.info("Ask a question first, then compare the ThemeGraph answer with the GraphRAG basic-search baseline.")
         return
     question, auto = turn
     st.markdown(f"Question: *{html.escape(question)}*")
     basic = state.compare_results().get(question)
     if basic is None:
-        st.button("Run basic search for this question", icon=":material/compare_arrows:", type="primary",
+        st.button("Run GraphRAG basic for this question", icon=":material/compare_arrows:", type="primary",
                   on_click=_run_basic, args=(data, question))
         st.caption("Highlighted words appear in only one of the two answers.")
         return
     left, right = st.columns(2, gap="medium")
     with left:
-        _side(data, "Basic (baseline)", basic, auto)
-    with right:
         _side(data, f"ThemeGraph ({auto.route})", auto, basic)
+        if auto.trace:
+            st.caption("Trace: " + " → ".join(f"{s.kind} ({len(s.ids)})" for s in auto.trace))
+    with right:
+        _side(data, "GraphRAG basic (baseline)", basic, auto)
     st.caption("Highlighted words appear in only one of the two answers; bold documents are cited by one side only.")
 
 

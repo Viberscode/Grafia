@@ -13,7 +13,8 @@ TAB_KEY = "tg_tab"
 GRAPH_KEY = "tg_graph"
 MODE_KEY = "tg_mode"
 TABS = ["Graph", "Themes", "Sources", "Compare", "Results"]
-MODE_LABELS = {"auto": "Auto", "global": "Global", "local": "Local", "basic": "Basic"}
+MODE_LABELS = {"auto": "Auto", "global": "Global", "local": "Local", "hybrid": "Hybrid", "basic": "GraphRAG basic",
+               "graphrag_local": "GraphRAG local", "graphrag_global": "GraphRAG global"}
 
 
 @dataclass

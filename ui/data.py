@@ -131,10 +131,14 @@ def load() -> DataSource:
 
 @st.cache_data(show_spinner=False, max_entries=64)
 def payload(_data: DataSource, is_mock: bool, h_nodes: tuple[str, ...], h_edges: tuple[str, ...],
-            communities: tuple[str, ...], show_full: bool, expanded: tuple[str, ...]) -> dict:
+            communities: tuple[str, ...], show_full: bool, expanded: tuple[str, ...], trace_json: str = "[]",
+            cited_documents: tuple[str, ...] | None = None) -> dict:
     """Cached component payload for the current answer (is_mock keys the cache per source)."""
+    import json
+
     from backend.graph import to_payload
 
     highlights = {"nodes": list(h_nodes), "edges": list(h_edges), "communities": list(communities)}
     return to_payload(_data.graph, highlights, show_full, max_nodes=MAX_NODES, text_units=_data.text_units,
-                      titles=_data.titles, expanded=list(expanded))
+                      titles=_data.titles, expanded=list(expanded), trace=json.loads(trace_json),
+                      cited_documents=None if cited_documents is None else list(cited_documents))

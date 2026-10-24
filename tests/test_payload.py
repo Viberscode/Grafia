@@ -11,13 +11,29 @@ def test_payload_schema_and_cap():
     data = MockData()
     resp = run(QUESTIONS[3], data=data, delay_s=0)
     p = to_payload(data.graph, resp.highlights, False, max_nodes=20, text_units=data.text_units, titles=data.titles)
-    assert set(p) == {"nodes", "edges", "highlight", "communities", "options"}
-    assert len(p["nodes"]) == 20
+    assert set(p) == {"nodes", "edges", "highlight", "communities", "options", "trace"}
+    entities = [n for n in p["nodes"] if n.get("kind") != "document"]
+    assert len(entities) == 20
     ids = {n["id"] for n in p["nodes"]}
     assert set(resp.highlights.nodes) <= ids
     assert all(e["source"] in ids and e["target"] in ids for e in p["edges"])
     assert set(p["highlight"]["order"]) <= set(p["highlight"]["nodes"])
     assert {"id", "label", "type", "community", "degree", "description", "sources"} <= set(p["nodes"][0])
+    docs = [n for n in p["nodes"] if n.get("kind") == "document"]
+    assert docs and all(n["id"].startswith("doc:") for n in docs)
+    assert all(e["source"].startswith("doc:") for e in p["edges"] if e.get("kind") == "cites")
+
+
+def test_payload_maps_trace_steps_to_nodes():
+    data = MockData()
+    uid, (doc, _) = next(iter(data.text_units.items()))
+    node = next(iter(data.graph.nodes))
+    trace = [{"kind": "seed", "ids": [node], "note": "exact"}, {"kind": "chunk", "ids": [uid], "note": ""},
+             {"kind": "document", "ids": [doc], "note": ""}]
+    p = to_payload(data.graph, {"nodes": [node]}, False, text_units=data.text_units, titles=data.titles, trace=trace)
+    assert [s["kind"] for s in p["trace"]] == ["seed", "chunk", "document"]
+    assert p["trace"][0]["nodes"] == [node] and p["trace"][2]["nodes"] == [f"doc:{doc}"]
+    assert p["highlight"]["documents"] == [f"doc:{doc}"]
 
 
 def test_payload_expand_pins_neighbours():
