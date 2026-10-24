@@ -15,7 +15,7 @@ ROUTES = {
 
 CSS = """
 <style>
-.block-container { padding-top: 2.2rem; max-width: 1600px; }
+.block-container { padding-top: 4rem; max-width: 1600px; }
 .tg-card { border: 1px solid rgba(128,128,128,.28); border-radius: 14px; padding: .8rem 1rem; margin: .35rem 0;
            background: rgba(128,128,128,.06); }
 .tg-claim { border-left: 3px solid #22a06b; }
