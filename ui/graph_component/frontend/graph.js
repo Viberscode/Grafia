@@ -22,6 +22,7 @@
     showDocs: false, hlDocs: new Set(), halo: [], trace: [], stepOf: {}, replayTimer: null,
   };
   const isDoc = (n) => n && n.kind === "document";
+  const PHYSICS_MS = 10000;
 
   // ---------- helpers ----------
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => (
@@ -193,6 +194,7 @@
   }
 
   function physicsBurst(ms) {
+    if (S.physics) return;
     clearTimeout(S.physicsTimer);
     S.network.setOptions({ physics: { enabled: true } });
     S.physicsTimer = setTimeout(() => {
@@ -629,13 +631,16 @@
       S.network.setOptions(labelOptions());
       status("Labels: " + { zoom: "shown when zoomed in", on: "always shown", off: "hidden" }[S.labels]);
     });
-    $("physics").addEventListener("click", () => {
-      S.physics = !S.physics;
+    const setPhysics = (on, note) => {
+      S.physics = on;
       clearTimeout(S.physicsTimer);
-      S.network.setOptions({ physics: { enabled: S.physics } });
-      $("physics").setAttribute("aria-pressed", String(S.physics));
-      status("Physics " + (S.physics ? "on" : "off"));
-    });
+      S.network.setOptions({ physics: { enabled: on } });
+      $("physics").setAttribute("aria-pressed", String(on));
+      status(note);
+      if (on) S.physicsTimer = setTimeout(() => setPhysics(false, "Physics off (layout settled)"), PHYSICS_MS);
+    };
+    $("physics").addEventListener("click", () =>
+      setPhysics(!S.physics, S.physics ? "Physics off" : `Physics on for ${PHYSICS_MS / 1000} s`));
     $("drawerClose").addEventListener("click", closeDrawer);
     $("legendToggle").addEventListener("click", () => {
       const col = $("legend").classList.toggle("collapsed");
