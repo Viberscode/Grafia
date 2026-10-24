@@ -42,6 +42,13 @@ def get_graph() -> nx.Graph:
     return _GRAPH
 
 
+def reset_graph() -> None:
+    """Forget the cached graph and tables so the next call reloads a rebuilt index."""
+    global _GRAPH
+    _GRAPH = None
+    engine.load_tables.cache_clear()
+
+
 def closest_community(question: str) -> str | None:
     """Community title with the largest word overlap with the question."""
     try:

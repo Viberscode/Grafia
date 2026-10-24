@@ -34,6 +34,7 @@ from backend.config import COMMUNITY_LEVEL, GRAPH_ROOT, INPUT_DIR, OUTPUT_DIR
 logger = logging.getLogger(__name__)
 
 TABLES = ["documents", "text_units", "entities", "relationships", "communities", "community_reports"]
+STAGING_DIR = GRAPH_ROOT / "output_staging"
 _CWD_LOCK = threading.RLock()
 
 
@@ -57,15 +58,26 @@ def _in_graph_root() -> Iterator[None]:
             os.chdir(cwd)
 
 
-def _load_graphrag_config() -> Any:
-    """Load settings.yaml with absolute storage paths."""
+def _load_graphrag_config(output_dir: Path = OUTPUT_DIR) -> Any:
+    """Load settings.yaml with absolute storage paths (output_dir holds parquet and LanceDB)."""
     from graphrag.config.load_config import load_config
 
     overrides = {
         "cache": {"storage": {"base_dir": str(GRAPH_ROOT / "cache")}},
-        "vector_store": {"db_uri": str(OUTPUT_DIR / "lancedb")},
+        "output_storage": {"base_dir": str(output_dir)},
+        "vector_store": {"db_uri": str(output_dir / "lancedb")},
     }
     return load_config(root_dir=GRAPH_ROOT, cli_overrides=overrides)
+
+
+def _promote(staging: Path) -> None:
+    """Swap a fully built staging index into place, keeping the old one as output_previous."""
+    previous = GRAPH_ROOT / "output_previous"
+    shutil.rmtree(previous, ignore_errors=True)
+    if OUTPUT_DIR.exists():
+        OUTPUT_DIR.rename(previous)
+    staging.rename(OUTPUT_DIR)
+    logger.info("New index promoted to %s (previous kept in %s)", OUTPUT_DIR, previous)
 
 
 def ingest_files(files: list[str | Path]) -> list[Path]:
@@ -88,12 +100,27 @@ def ingest_files(files: list[str | Path]) -> list[Path]:
     return written
 
 
+def _stage_callbacks() -> list[Any]:
+    """Workflow callbacks that log 'Workflow <name> started' so a UI can follow progress."""
+    from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+
+    class _StageLogger(NoopWorkflowCallbacks):
+        def workflow_start(self, name: str, instance: object) -> None:
+            logger.info("Workflow %s started", name)
+
+        def workflow_end(self, name: str, instance: object) -> None:
+            logger.info("Workflow %s finished", name)
+
+    return [_StageLogger()]
+
+
 def run_index() -> bool:
-    """Run the full GraphRAG indexing pipeline and return True when all workflows succeed."""
+    """Build the index into output_staging; promote it to output only when every workflow succeeds."""
     from graphrag.api import build_index
 
+    shutil.rmtree(STAGING_DIR, ignore_errors=True)
     with _in_graph_root():
-        results = asyncio.run(build_index(config=_load_graphrag_config()))
+        results = asyncio.run(build_index(config=_load_graphrag_config(STAGING_DIR), callbacks=_stage_callbacks()))
     ok = bool(results)
     for r in results:
         if r.error:
@@ -101,8 +128,41 @@ def run_index() -> bool:
             logger.error("Workflow %s failed: %s", r.workflow, r.error)
         else:
             logger.info("Workflow %s done", r.workflow)
+    if ok:
+        _promote(STAGING_DIR)
+    else:
+        logger.error("Index build failed; the previous index in %s is unchanged", OUTPUT_DIR)
     load_tables.cache_clear()
     return ok
+
+
+def post_index_hook() -> None:
+    """Load the fresh index into the graph and vector stores, once backend.stores.loader exists."""
+    try:
+        from backend.stores import loader
+    except ImportError:
+        logger.info("No store loader installed; skipping post-index load")
+        return
+    loader.load(reset=True)
+
+
+def index_main() -> int:
+    """CLI entry for indexing: take the lock, build, run the post-index hook; returns an exit code."""
+    from backend import index_job
+
+    try:
+        with index_job.hold_lock():
+            ok = run_index()
+            if ok:
+                post_index_hook()
+    except index_job.IndexLocked as err:
+        logger.error("%s", err)
+        return 2
+    except Exception:
+        logger.exception("Indexing crashed")
+        ok = False
+    logger.info("%s %s", index_job.RESULT_MARKER, "success" if ok else "failed")
+    return 0 if ok else 1
 
 
 @lru_cache(maxsize=1)
@@ -184,7 +244,7 @@ async def _search(question: str, method: str, t: dict[str, pd.DataFrame]) -> tup
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--index":
-        sys.exit(0 if run_index() else 1)
+        sys.exit(index_main())
     q = sys.argv[1] if len(sys.argv) > 1 else "What are the main themes?"
     m = sys.argv[2] if len(sys.argv) > 2 else "global"
     res = run_query(q, m)

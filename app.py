@@ -7,7 +7,7 @@ import streamlit as st
 
 st.set_page_config(page_title="ThemeGraph", page_icon=":material/hub:", layout="wide")
 
-from ui import chat, compare, sources, state, styles, themes  # noqa: E402
+from ui import chat, compare, ingest_panel, sources, state, styles, themes  # noqa: E402
 from ui.data import DataSource, load, payload  # noqa: E402
 
 logger = logging.getLogger("themegraph.app")
@@ -81,6 +81,8 @@ def main() -> None:
         st.info(BANNER, icon=":material/science:")
     left, right = st.columns([4, 6], gap="large")
     with left:
+        safe("header", chat.header, data)
+        safe("documents", ingest_panel.render, data)
         safe("chat", chat.render, data)
     with right:
         with st.container(key="tg_right"):

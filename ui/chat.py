@@ -297,8 +297,7 @@ def input_row() -> None:
 
 
 def render(data: DataSource) -> None:
-    """Whole chat column."""
-    header(data)
+    """Chat history, pending turn and the input row (the header is rendered separately)."""
     chat = st.container(height=640, key="tg_chat", border=False, autoscroll=True)
     with chat:
         if not state.messages() and not st.session_state.get("pending"):

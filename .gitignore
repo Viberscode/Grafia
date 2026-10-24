@@ -8,5 +8,8 @@ out/
 myproj/cache/
 myproj/logs/
 myproj/output/
+myproj/output_backup*/
+myproj/output_staging/
+myproj/output_previous/
 myproj/index_run.log
 eval/results/raw.jsonl
